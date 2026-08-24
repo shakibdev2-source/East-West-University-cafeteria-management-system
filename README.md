@@ -41,7 +41,9 @@ Import the SQL database script located inside the mysql_database/ directory.
 Open http://localhost/campusbite_db/login.php in your browser.
 
 Team Roles & Individual Contributions
-** Md. Shakib Hossan** — Lead Full-Stack Developer & Technical Architect
+
+
+**Md. Shakib Hossan** — Lead Full-Stack Developer & Technical Architect
 Frontend & UI/UX: Built 100% of the custom responsive user interface and layout from scratch using HTML5, CSS3, and JavaScript.
 
 Backend Logic: Developed all core PHP modules, authentication system, order processing flow, and session management.
