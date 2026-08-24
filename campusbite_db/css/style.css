@@ -1,0 +1,471 @@
+<?php
+
+session_start();
+
+include "../database/database.php";
+
+
+// Student Check
+
+if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'student'){
+
+    header("Location: ../login.php");
+
+    exit();
+
+}
+
+
+$user_id = $_SESSION['user_id'];
+
+$name = $_SESSION['name'] ?? $_SESSION['user_name'] ?? 'Student';
+
+
+
+
+// Total Orders
+
+$order_query = mysqli_query(
+
+    $conn,
+
+    "SELECT COUNT(*) AS total
+
+     FROM orders
+
+     WHERE user_id='$user_id'"
+
+);
+
+
+$total_orders = mysqli_fetch_assoc($order_query)['total'] ?? 0;
+
+
+
+
+
+// Cart Items
+
+$cart_query = mysqli_query(
+
+    $conn,
+
+    "SELECT COUNT(*) AS total
+
+     FROM cart
+
+     WHERE user_id='$user_id'"
+
+);
+
+
+$cart_items = mysqli_fetch_assoc($cart_query)['total'] ?? 0;
+
+
+
+
+
+
+// Pending Orders
+
+$pending_query = mysqli_query(
+
+    $conn,
+
+    "SELECT COUNT(*) AS total
+
+     FROM orders
+
+     WHERE user_id='$user_id'
+
+     AND status='Pending'"
+
+);
+
+
+$pending_orders = mysqli_fetch_assoc($pending_query)['total'] ?? 0;
+
+
+
+?>
+
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+
+<head>
+
+
+<meta charset="UTF-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Student Dashboard | CampusBite</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    body {
+        background-color: #f1f5f9 !important;
+        background-image: none !important; /* বিল্ডিং ব্যাকগ্রাউন্ড রিমুভ করার জন্য */
+        color: #0f172a;
+        min-height: 100vh;
+    }
+
+    /* Sidebar Design */
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        background: #0f172a;
+        padding: 25px 15px;
+        z-index: 1000;
+    }
+
+    .sidebar .logo {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        padding-left: 10px;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        background: #1e293b;
+        color: #f8fafc;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+        background: #2563eb;
+        color: white;
+        transform: translateX(5px);
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 250px;
+        padding: 35px;
+    }
+
+    .welcome {
+        background: white;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .welcome h1 {
+        font-size: 26px;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .welcome p {
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    /* Cards */
+    .cards {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        flex: 1;
+        min-width: 200px;
+        padding: 25px;
+        color: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card h3 {
+        font-size: 16px;
+        margin-bottom: 12px;
+        opacity: 0.9;
+    }
+
+    .card p {
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    .blue { background: #2563eb; }
+    .green { background: #10b981; }
+    .orange { background: #f59e0b; }
+    .red { background: #ef4444; }
+</style>
+
+</head>
+
+
+
+<body>
+
+
+
+
+
+<!-- Sidebar -->
+
+
+<div class="sidebar">
+
+
+<h2 class="logo">
+
+🍔 CampusBite
+
+</h2>
+
+
+
+<a href="dashboard.php">
+
+🏠 Dashboard
+
+</a>
+
+
+
+<a href="menu.php">
+
+🍽️ Food Menu
+
+</a>
+
+
+
+<a href="cart.php">
+
+🛒 My Cart
+
+</a>
+
+
+
+<a href="checkout.php">
+
+💳 Checkout
+
+</a>
+
+
+
+<a href="orders.php">
+
+📦 My Orders
+
+</a>
+
+
+
+<a href="feedback.php">
+
+📝 Feedback
+
+</a>
+
+
+
+<a href="../logout.php">
+
+🚪 Logout
+
+</a>
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- Main Content -->
+
+
+<div class="main-content">
+
+
+
+<div class="welcome">
+
+
+<h1>
+
+Welcome Student,
+
+<?php echo htmlspecialchars($name); ?> 👋
+
+</h1>
+
+
+<p>
+
+Welcome to CampusBite Student Panel
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="cards">
+
+
+
+<div class="card blue">
+
+
+<h3>
+
+My Orders
+
+</h3>
+
+
+<p>
+
+<?php echo $total_orders; ?>
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card green">
+
+
+<h3>
+
+Cart Items
+
+</h3>
+
+
+<p>
+
+<?php echo $cart_items; ?>
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card orange">
+
+
+<h3>
+
+Pending Orders
+
+</h3>
+
+
+<p>
+
+<?php echo $pending_orders; ?>
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card red">
+
+
+<h3>
+
+CampusBite
+
+</h3>
+
+
+<p>
+
+🍔
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<script src="../js/script.js"></script>
+
+
+
+</body>
+
+
+</html>

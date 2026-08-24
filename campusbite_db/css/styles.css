@@ -1,0 +1,339 @@
+/* ==========================================
+   Centered Glass Card with Modal Popup
+========================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), 
+                url('ewu-bg.jpg') center/cover no-repeat fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    overflow-x: hidden;
+}
+
+/* Centered Glass Container */
+.glass-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(18, 18, 18, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 2.2rem 2rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    color: #ffffff;
+}
+
+/* Logo Sizing */
+.brand-logo {
+    width: 65px !important;
+    max-width: 65px !important;
+    height: auto !important;
+    object-fit: contain;
+    margin: 0 auto 0.6rem auto;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+
+/* Headings */
+.glass-card h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+}
+
+.sub-title {
+    font-size: 0.85rem;
+    color: #d1d5db;
+    margin-bottom: 1.3rem;
+}
+
+/* Role Switcher Tabs */
+.role-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 4px;
+    border-radius: 30px;
+    margin-bottom: 1.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    font-weight: 600;
+    font-size: 0.82rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: #22c55e;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Form Visibility */
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Input Fields */
+.input-group {
+    text-align: left;
+    margin-bottom: 1.1rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e5e7eb;
+    margin-bottom: 0.35rem;
+}
+
+.input-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-field i {
+    position: absolute;
+    left: 12px;
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+.input-field input, .captcha-flex input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-field input::placeholder, .captcha-flex input::placeholder {
+    color: #9ca3af;
+}
+
+.input-field input:focus, .captcha-flex input:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.eye-icon {
+    left: auto !important;
+    right: 12px;
+    cursor: pointer;
+}
+
+/* Security Verification / Captcha */
+.captcha-flex {
+    display: flex;
+    gap: 10px;
+}
+
+.captcha-badge {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0 12px;
+    border-radius: 10px;
+}
+
+.captcha-badge span {
+    font-family: monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #38bdf8;
+}
+
+.refresh-btn {
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: transform 0.4s ease;
+}
+
+.refresh-btn:hover {
+    color: #ffffff;
+    transform: rotate(180deg);
+}
+
+.captcha-flex input {
+    flex: 1;
+    padding-left: 12px;
+}
+
+/* Actions */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: #d1d5db;
+    margin-bottom: 1.3rem;
+}
+
+.form-actions label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.forgot-link {
+    color: #22c55e;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+/* Submit Buttons */
+.btn-submit {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-green {
+    background: #22c55e;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.btn-green:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+.btn-blue {
+    background: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-blue:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+   FORGOT PASSWORD MODAL STYLES
+========================================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-card {
+    background: rgba(22, 27, 34, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 360px;
+    text-align: center;
+    position: relative;
+    color: #ffffff;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px; right: 20px;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #ffffff;
+}
+
+.modal-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin: 0 auto 1rem auto;
+}
+
+.modal-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+}
+
+.modal-card p {
+    font-size: 0.82rem;
+    color: #9ca3af;
+    line-height: 1.4;
+}
