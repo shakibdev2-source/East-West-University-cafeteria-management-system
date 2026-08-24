@@ -1,1 +1,2 @@
 campusbite_db/** linguist-detectable=true
+*.php linguist-language=PHP
