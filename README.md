@@ -43,14 +43,32 @@ Open http://localhost/campusbite_db/login.php in your browser.
 **Team Roles & Individual Contributions**
 
 
-**Md. Shakib Hossan** — Lead Full-Stack Developer & Technical Architect
-Frontend & UI/UX: Built 100% of the custom responsive user interface and layout from scratch using HTML5, CSS3, and JavaScript.
+**Md. Shakib Hossan** —Lead Full-Stack Developer & Technical Architect
+Frontend & UI Design:
 
-Backend Logic: Developed all core PHP modules, authentication system, order processing flow, and session management.
+Built responsive multi-role dynamic interfaces using HTML5, CSS3 (Custom Styling & Glassmorphism Design), and JavaScript (DOM Manipulation).
 
-Database Optimization: Fixed, refactored, and optimized the relational database schema, tables, ERD, and SQL queries.
+Integrated Font Awesome Icons (fa-solid fa-user, fa-lock, fa-eye, etc.) for intuitive UX and password-toggle features.
 
-Technical Documentation: Authored the main technical content, architecture logic, and raw system design for the report.
+Backend & Architecture:
+
+Developed multi-user role authentication and dashboards for Student, Faculty, Staff, and Admin portals.
+
+Implemented core business logic for Cart Management, Checkout Systems, Order Tracking, Feedback Modules, and Authentication (login.php, register.php, logout.php).
+
+Security Implementation:
+
+Integrated CSRF Token Validation (csrf_token) in auth forms to prevent Cross-Site Request Forgery attacks.
+
+Developed custom Dynamic CAPTCHA Verification Systems (SESSION['captcha_student']) and Interactive Refresh logic to protect login forms from bot attacks.
+
+Secured sensitive dynamic data rendering using htmlspecialchars().
+
+Database Architecture & Refactoring:
+
+Designed, optimized, and refactored the relational MySQL database schema (database/), ERD, tables, and relational SQL queries.
+
+Handled full session-state management and dynamic SQL integration across all portal modules.
 
 Team Acknowledgments
 
