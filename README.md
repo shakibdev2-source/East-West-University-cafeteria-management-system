@@ -40,7 +40,7 @@ Import the SQL database script located inside the mysql_database/ directory.
 
 Open http://localhost/campusbite_db/login.php in your browser.
 
-Team Roles & Individual Contributions
+**Team Roles & Individual Contributions**
 
 
 **Md. Shakib Hossan** — Lead Full-Stack Developer & Technical Architect
