@@ -1,4 +1,4 @@
-# East-West University Cafeteria Management System
+# East West University Cafeteria Management System
 
 A web-based cafeteria management system built with PHP, MySQL, CSS, and HTML for smooth order processing, dynamic menu administration, and sales tracking on university campuses.
 
