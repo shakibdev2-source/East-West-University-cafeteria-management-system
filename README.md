@@ -15,7 +15,7 @@
 <img width="1872" height="833" alt="image" src="https://github.com/user-attachments/assets/2d66efab-4308-4a33-804b-7dba4c08118f" />
 
 ### 4. Direct Checkout & Payment Integration
-> **Seamless Checkout System:** Automated order summary calculation with integrated digital payment options (bKash/Online Payment) and instant receipt generation.### 4. Direct Checkout & Payment Integration
+> **Seamless Checkout System:** Automated order summary calculation with integrated digital payment options (bKash/Online Payment) and instant receipt generation. Direct Checkout & Payment Integration
 > **Seamless Checkout System:** Automated order summary calculation with integrated digital payment options (bKash/Online Payment) and instant receipt generation.
 
 <img width="1916" height="910" alt="image" src="https://github.com/user-attachments/assets/c43cb46b-5835-4fe6-b7d1-4300d716588f" />
