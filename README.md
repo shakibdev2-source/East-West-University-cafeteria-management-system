@@ -5,15 +5,18 @@
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
 
 ### 2. Student Dashboard Overview
-![Student Dashboard](screenshots/dashboard.png)
 > **Student Dashboard:** Clean and intuitive interface featuring quick access shortcuts (Menu, Cart, Orders, Feedback), live metric counters, and recent order status tracking.
 
 <img width="1907" height="931" alt="image" src="https://github.com/user-attachments/assets/501c2a7e-001f-48a0-8f07-9ed48b687587" />
 
+## 3. Interactive Food Menu & Ordering
 
+> **Digital Menu & Cart:** Real-time food item browsing with categories, pricing, availability badges, and one-click item addition to the dynamic cart.
 <img width="1872" height="833" alt="image" src="https://github.com/user-attachments/assets/2d66efab-4308-4a33-804b-7dba4c08118f" />
 
-
+### 4. Direct Checkout & Payment Integration
+> **Seamless Checkout System:** Automated order summary calculation with integrated digital payment options (bKash/Online Payment) and instant receipt generation.### 4. Direct Checkout & Payment Integration
+> **Seamless Checkout System:** Automated order summary calculation with integrated digital payment options (bKash/Online Payment) and instant receipt generation.
 
 <img width="1916" height="910" alt="image" src="https://github.com/user-attachments/assets/c43cb46b-5835-4fe6-b7d1-4300d716588f" />
 
