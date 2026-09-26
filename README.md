@@ -4,6 +4,9 @@
 > **Guided Welcome Tour:** An interactive onboarding popup modal introducing new students to system features, navigation shortcuts, and menu options.
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
 
+### 2. Student Dashboard Overview
+![Student Dashboard](screenshots/dashboard.png)
+> **Student Dashboard:** Clean and intuitive interface featuring quick access shortcuts (Menu, Cart, Orders, Feedback), live metric counters, and recent order status tracking.
 
 <img width="1907" height="931" alt="image" src="https://github.com/user-attachments/assets/501c2a7e-001f-48a0-8f07-9ed48b687587" />
 
