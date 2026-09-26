@@ -1,26 +1,3 @@
-# East West University Cafeteria Management System
-
-A web-based cafeteria management system built with PHP, MySQL, CSS, and HTML for smooth order processing, dynamic menu administration, and sales tracking on university campuses.
-
- **Official Documentation:**
-
----
-
-## Tech Stack & Database Architecture
-* **Frontend:** HTML5, CSS3, JavaScript (Custom Responsive UI & Layout)
-* **Backend:** PHP (Role-based Authentication, Order Processing & Logic)
-* **Database:** MySQL (Relational Schema Optimization & Refactoring)
-
----
-
-## Key System Features
-* Dynamic Menu & Item Management for Admins
-* Interactive Student & Staff Ordering Interface
-* Role-based Access Control (Admin, Student, Faculty, Staff)
-* Fully Refactored Relational Database with SQL Optimization
-
-
-
 ## 📸 Preview & Screenshots
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
 
@@ -47,6 +24,28 @@ A web-based cafeteria management system built with PHP, MySQL, CSS, and HTML for
 
 
 
+
+
+# East West University Cafeteria Management System
+
+A web-based cafeteria management system built with PHP, MySQL, CSS, and HTML for smooth order processing, dynamic menu administration, and sales tracking on university campuses.
+
+ **Official Documentation:**
+
+---
+
+## Tech Stack & Database Architecture
+* **Frontend:** HTML5, CSS3, JavaScript (Custom Responsive UI & Layout)
+* **Backend:** PHP (Role-based Authentication, Order Processing & Logic)
+* **Database:** MySQL (Relational Schema Optimization & Refactoring)
+
+---
+
+## Key System Features
+* Dynamic Menu & Item Management for Admins
+* Interactive Student & Staff Ordering Interface
+* Role-based Access Control (Admin, Student, Faculty, Staff)
+* Fully Refactored Relational Database with SQL Optimization
 
 ---
 
