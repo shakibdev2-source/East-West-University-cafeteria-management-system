@@ -27,7 +27,12 @@
 <img width="1900" height="915" alt="image" src="https://github.com/user-attachments/assets/be640540-177d-41bb-9b82-7fd8eb733851" />
 
 
+### 5. Direct Checkout & Payment Integration
 
+*Seamless Checkout System:* Automated order summary calculation with integrated digital payment options (bKash/Online Payment) and instant receipt generation.
+
+#### 💳 bKash Payment Gateway
+*bKash Automated Gateway:* Integrated seamless digital payment system displaying total payable amount with automated OTP verification for secure transaction.
 <img width="1865" height="866" alt="image" src="https://github.com/user-attachments/assets/7e01e122-8705-40db-875b-7c79d8497c8c" />
 
 
