@@ -1,4 +1,7 @@
 ## 📸 Preview & Screenshots
+
+### 1. Interactive Onboarding & Guided Tour
+> **Guided Welcome Tour:** An interactive onboarding popup modal introducing new students to system features, navigation shortcuts, and menu options.
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
 
 
