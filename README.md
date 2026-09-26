@@ -99,12 +99,7 @@ Designed, optimized, and refactored the relational MySQL database schema (databa
 
 Handled full session-state management and dynamic SQL integration across all portal modules.
 
-Team Acknowledgments
 
-**Ristia inam elme**
-Project Documentation Specialist (PDF Report Formatting & Database Schema/ERD Visual Design).
-
-**Md. Arifur Rahman Razu**:( https://github.com/mdarifurrahmanrazu/university-cafeteria-management-system  ) Initial Database Draft Support.
 
 📄 License
 This project is licensed under the MIT License
