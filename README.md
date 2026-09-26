@@ -25,9 +25,38 @@ A web-based cafeteria management system built with PHP, MySQL, CSS, and HTML for
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
 
 
+<img width="1907" height="931" alt="image" src="https://github.com/user-attachments/assets/501c2a7e-001f-48a0-8f07-9ed48b687587" />
+
+
+<img width="1872" height="833" alt="image" src="https://github.com/user-attachments/assets/2d66efab-4308-4a33-804b-7dba4c08118f" />
+
+
+
+<img width="1916" height="910" alt="image" src="https://github.com/user-attachments/assets/c43cb46b-5835-4fe6-b7d1-4300d716588f" />
+
+
+<img width="1907" height="952" alt="image" src="https://github.com/user-attachments/assets/adc5c825-3636-4198-b2f9-130cfa80dff7" />
+
+
+<img width="1900" height="915" alt="image" src="https://github.com/user-attachments/assets/be640540-177d-41bb-9b82-7fd8eb733851" />
+
+
+
+<img width="1865" height="866" alt="image" src="https://github.com/user-attachments/assets/7e01e122-8705-40db-875b-7c79d8497c8c" />
+
+
+
+
+
 ---
 
 ## How to Run Locally
+
+
+
+
+
+
 1. Clone this repository to your local machine:
    ```bash
    git clone [https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git](https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git)
