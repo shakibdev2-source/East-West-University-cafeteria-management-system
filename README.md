@@ -22,7 +22,8 @@ A web-based cafeteria management system built with PHP, MySQL, CSS, and HTML for
 
 
 ## 📸 Preview & Screenshots
-*(Add project screenshots in a `/screenshots` folder and link them here)*
+<img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
+
 
 ---
 
