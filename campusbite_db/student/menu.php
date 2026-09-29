@@ -44,15 +44,15 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusBite | Dynamic Food Menu</title>
+    <title>Cafeteria | AI Dynamic Food Menu</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #059669;
-            --primary-hover: #047857;
-            --primary-light: #ecfdf5;
-            --primary-glow: rgba(5, 150, 105, 0.35);
+            --primary: #16a34a;
+            --primary-hover: #15803d;
+            --primary-light: #dcfce7;
+            --primary-glow: rgba(22, 163, 74, 0.35);
             --bg-main: #f8fafc;
             --card-bg: #ffffff;
             --text-main: #0f172a;
@@ -67,7 +67,7 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --border: #334155;
-            --primary-light: rgba(5, 150, 105, 0.15);
+            --primary-light: rgba(22, 163, 74, 0.15);
             --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
@@ -76,16 +76,15 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
         .sidebar { width: 260px; background: var(--card-bg); border-right: 1px solid var(--border); padding: 24px 18px; display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; }
         .brand { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-        .brand-icon { background: linear-gradient(135deg, var(--primary), #10b981); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; box-shadow: 0 8px 18px var(--primary-glow); }
+        .brand-icon { background: linear-gradient(135deg, var(--primary), #22c55e); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; box-shadow: 0 8px 18px var(--primary-glow); }
 
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
         .nav-item a { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; text-decoration: none; color: var(--text-sub); font-size: 13.5px; font-weight: 600; border-radius: 12px; }
         .nav-item.active a { background: var(--primary-light); color: var(--primary); font-weight: 700; }
         .nav-item a:hover { background: var(--primary-light); color: var(--primary); }
 
-        .cart-badge { background: linear-gradient(135deg, var(--primary), #10b981); color: #fff; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 800; display: inline-block; }
+        .cart-badge { background: linear-gradient(135deg, var(--primary), #22c55e); color: #fff; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 800; display: inline-block; }
         
-        /* Premium Shake & Bounce Effect for Cart Icon */
         .cart-target-shake {
             animation: cartShake 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
         }
@@ -100,13 +99,13 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
         .main-content { flex: 1; margin-left: 260px; padding: 24px 32px; width: calc(100% - 260px); max-width: 1440px; }
 
-        .ai-banner { background: linear-gradient(135deg, #059669, #0d9488); border-radius: 20px; padding: 20px 24px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; box-shadow: 0 12px 30px var(--primary-glow); position: relative; overflow: hidden; }
+        .ai-banner { background: linear-gradient(135deg, #16a34a, #15803d); border-radius: 20px; padding: 20px 24px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; box-shadow: 0 12px 30px var(--primary-glow); position: relative; overflow: hidden; }
         .ai-banner::after { content: ''; position: absolute; right: -20px; top: -20px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
 
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 12px 22px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; }
         .header-actions { display: flex; align-items: center; gap: 12px; }
 
-        .search-box { position: relative; width: 280px; }
+        .search-box { position: relative; width: 300px; }
         .search-box input { width: 100%; background: var(--bg-main); border: 1px solid var(--border); border-radius: 11px; padding: 9px 38px 9px 38px; font-size: 13px; color: var(--text-main); outline: none; }
         .search-box .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
         .search-box .mic-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px; transition: color 0.3s, transform 0.3s; }
@@ -133,11 +132,11 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .food-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 16px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; }
-        .food-card:hover { border-color: var(--primary); transform: translateY(-6px); box-shadow: 0 15px 35px -10px rgba(5, 150, 105, 0.15); }
+        .food-card:hover { border-color: var(--primary); transform: translateY(-6px); box-shadow: 0 15px 35px -10px var(--primary-glow); }
 
         .badge-group { position: absolute; top: 14px; left: 14px; display: flex; align-items: center; gap: 6px; z-index: 2; }
         .rating-badge { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); color: #f59e0b; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px; }
-        .bestseller-badge { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
+        .bestseller-badge { background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3); }
 
         .fav-btn { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; background: var(--card-bg); border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-sub); z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s ease; }
         .fav-btn.active { color: #ef4444; border-color: #ef4444; transform: scale(1.1); }
@@ -145,13 +144,12 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         .food-image-wrapper { width: 100%; height: 170px; border-radius: 14px; background: var(--bg-main); margin-bottom: 12px; display: flex; align-items: center; justify-content: center; padding: 8px; overflow: hidden; }
         .food-image-wrapper img { max-width: 100%; max-height: 100%; object-fit: cover; border-radius: 10px; transition: transform 0.5s ease-out; }
 
-        /* ULTRA SMOOTH FLYING ANIMATION STYLES */
         .flying-square-item {
             position: fixed;
             z-index: 99999;
             object-fit: cover;
             border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(5, 150, 105, 0.5), 0 0 20px rgba(5, 150, 105, 0.3);
+            box-shadow: 0 20px 40px var(--primary-glow);
             border: 3px solid var(--primary);
             pointer-events: none;
             will-change: transform, opacity;
@@ -163,7 +161,7 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         .q-btn { width: 26px; height: 26px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); font-weight: 700; cursor: pointer; transition: background-color 0.2s ease; }
         .q-input { width: 100%; text-align: center; border: none; background: transparent; font-size: 13px; font-weight: 800; color: var(--text-main); outline: none; }
 
-        .btn-add-cart { width: 100%; background: linear-gradient(135deg, var(--primary), #10b981); color: #fff; border: none; padding: 10px; border-radius: 11px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px var(--primary-glow); transition: all 0.4s ease; }
+        .btn-add-cart { width: 100%; background: linear-gradient(135deg, var(--primary), #22c55e); color: #fff; border: none; padding: 10px; border-radius: 11px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px var(--primary-glow); transition: all 0.4s ease; }
         
         .btn-add-cart.added-success { 
             background: linear-gradient(135deg, #0f172a, #334155) !important; 
@@ -190,16 +188,16 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         .ai-tour-card { position: fixed; z-index: 10002; width: 360px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 22px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35), 0 0 30px var(--primary-glow); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; gap: 14px; }
 
         .ai-tour-progress-bar { width: 100%; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
-        .ai-tour-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #10b981); width: 20%; transition: width 0.4s ease; }
+        .ai-tour-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #22c55e); width: 20%; transition: width 0.4s ease; }
 
         .ai-tour-top { display: flex; align-items: center; justify-content: space-between; }
         .ai-badge { background: var(--primary-light); color: var(--primary); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
         .ai-wave-icon { display: inline-block; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: pulseWave 1.5s infinite; }
         
         @keyframes pulseWave {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 var(--primary-glow); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
         }
 
         .ai-tour-title { font-size: 15px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin-top: 4px; }
@@ -270,8 +268,8 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
     <div class="sidebar">
         <div>
             <div class="brand">
-                <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
-                <span>EWU Cafeteria</span>
+                <div class="brand-icon"><i class="fa-solid fa-utensils"></i></div>
+                <span>Cafeteria</span>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item"><a href="dashboard.php"><span><i class="fa-solid fa-house"></i> <span>Dashboard</span></span></a></li>
@@ -294,9 +292,9 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
     <div class="main-content">
         <div class="ai-banner" id="tourAiBanner">
             <div>
-                <span style="background: rgba(255,255,255,0.2); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.5px;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI SUGGESTION</span>
-                <h2 style="font-size: 18px; font-weight: 800; margin-top: 6px;">Recommended Combo: Chilled Beverage & Snacks</h2>
-                <p style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Based on campus orders trending right now.</p>
+                <span style="background: rgba(255,255,255,0.2); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.5px;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI AUTO-ORDER ASSISTANT</span>
+                <h2 style="font-size: 18px; font-weight: 800; margin-top: 6px;">Say Food Name, AI will tell price & ask to buy!</h2>
+                <p style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Try saying "Chicken", "Burger", or any food name.</p>
             </div>
             <button id="startAiTourBtn" type="button" style="background: #fff; color: var(--primary); border: none; padding: 9px 16px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; position: relative; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"><i class="fa-solid fa-play"></i> Start AI Tour</button>
         </div>
@@ -307,8 +305,8 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             <div class="header-actions">
                 <div class="search-box" id="tourSearchBox">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="menuSearchInput" placeholder="Search menu..." autocomplete="off">
-                    <button class="mic-btn" id="voiceSearchBtn" title="Speak to Search"><i class="fa-solid fa-microphone"></i></button>
+                    <input type="text" id="menuSearchInput" placeholder="Type food & press enter..." autocomplete="off">
+                    <button class="mic-btn" id="voiceSearchBtn" title="Speak to Order"><i class="fa-solid fa-microphone"></i></button>
                     <div class="search-autocomplete" id="searchAutocomplete"></div>
                 </div>
 
@@ -396,6 +394,8 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         let isSoundEnabled = true;
         let isVoiceEnabled = true;
         let localCartState = [];
+        let pendingFoodCard = null;
+        let waitingForFoodConfirmation = false;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playBeep(freq = 600, duration = 0.08) {
@@ -474,6 +474,89 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             autoBox.style.display = matches > 0 ? 'block' : 'none';
         });
 
+        function handleAiAutoBuy(inputText) {
+            const text = inputText.toLowerCase().trim();
+
+            if (waitingForFoodConfirmation) {
+                if (text.includes('yes') || text.includes('হ্যাঁ') || text.includes('ha') || text.includes('ok') || text.includes('sure') || text.includes('yep')) {
+                    const cardToBuy = pendingFoodCard;
+                    waitingForFoodConfirmation = false;
+                    pendingFoodCard = null;
+
+                    if (cardToBuy) {
+                        const addBtn = cardToBuy.querySelector('.btn-add-cart');
+                        const foodName = addBtn.getAttribute('data-name');
+                        cardToBuy.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        addBtn.click();
+                        speakText(`${foodName} is successfully added to your cart!`);
+                        showToast(`🤖 AI Assistant: Added ${foodName} to cart!`);
+                    }
+                    return;
+                } else if (text.includes('no') || text.includes('না') || text.includes('nah')) {
+                    waitingForFoodConfirmation = false;
+                    pendingFoodCard = null;
+                    speakText("Alright, cancelled.");
+                    showToast("Order cancelled.");
+                    return;
+                }
+            }
+
+            let cleanQuery = text
+                .replace(/please/g, '')
+                .replace(/add/g, '')
+                .replace(/to cart/g, '')
+                .replace(/buy/g, '')
+                .replace(/order/g, '')
+                .replace(/i want/g, '')
+                .replace(/give me/g, '')
+                .trim();
+
+            let matchedCard = null;
+            let highestMatchScore = 0;
+
+            document.querySelectorAll('.food-card').forEach(card => {
+                const foodName = card.getAttribute('data-name');
+                if (foodName.includes(text) || foodName.includes(cleanQuery) || text.includes(foodName)) {
+                    let score = foodName.length;
+                    if (score > highestMatchScore) {
+                        highestMatchScore = score;
+                        matchedCard = card;
+                    }
+                }
+            });
+
+            if (matchedCard) {
+                pendingFoodCard = matchedCard;
+                waitingForFoodConfirmation = true;
+                const addBtn = matchedCard.querySelector('.btn-add-cart');
+                const foodName = addBtn.getAttribute('data-name');
+                const price = matchedCard.getAttribute('data-price');
+
+                matchedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                matchedCard.style.borderColor = 'var(--primary)';
+                setTimeout(() => { matchedCard.style.borderColor = 'var(--border)'; }, 2000);
+
+                const promptMsg = `${foodName} price is ${price} Taka. Do you want to add this to cart? Please say Yes or No.`;
+                speakText(promptMsg);
+                showToast(`🤖 AI: ${foodName} price is ৳${price}. Do you want to add it? (Say Yes/No)`);
+            } else {
+                speakText(`Sorry, I could not find any food item matching ${inputText}.`);
+                showToast(`🤖 AI Assistant: Item "${inputText}" not found.`);
+            }
+        }
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const queryVal = searchInput.value.trim();
+                if (queryVal) {
+                    handleAiAutoBuy(queryVal);
+                    searchInput.value = '';
+                    autoBox.style.display = 'none';
+                }
+            }
+        });
+
         const voiceSearchBtn = document.getElementById('voiceSearchBtn');
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -489,14 +572,13 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
             recognition.onstart = () => {
                 voiceSearchBtn.classList.add('listening');
-                showToast("Listening... Speak now");
+                showToast("AI Listening... Speak food name");
             };
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 searchInput.value = transcript;
-                searchInput.dispatchEvent(new Event('input'));
-                showToast(`Searched for: "${transcript}"`);
+                handleAiAutoBuy(transcript);
             };
 
             recognition.onerror = (event) => {
@@ -643,7 +725,6 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             showToast("Item Removed");
         }
 
-        /* NEW HIGH-PERFORMANCE FLYING ANIMATION */
         function flyToCart(card) {
             const imgElem = card.querySelector('.food-img');
             const targetNav = document.getElementById('tourCartNav');
@@ -653,7 +734,6 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             const imgRect = imgElem.getBoundingClientRect();
             const targetRect = targetNav.getBoundingClientRect();
 
-            // Dynamic size calculations
             const initialWidth = imgRect.width;
             const initialHeight = imgRect.height;
 
@@ -672,10 +752,9 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
             document.body.appendChild(flyer);
 
-            const duration = 850; // Faster & Snappier
+            const duration = 850;
             const startTime = performance.now();
 
-            // Bezier curve easing function
             function cubicBezier(t) {
                 return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
             }
@@ -685,15 +764,13 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                 let progress = Math.min(elapsed / duration, 1);
                 const ease = cubicBezier(progress);
 
-                // Curved parabolic path calculation
                 const currX = startX + (endX - startX) * ease;
-                const arcY = -180 * Math.sin(progress * Math.PI); // Smooth height curve
+                const arcY = -180 * Math.sin(progress * Math.PI);
                 const currY = startY + (endY - startY) * ease + arcY;
 
-                // Scale transition
-                const scale = 1 - (progress * 0.75); // Shrinks naturally towards cart
-                const rotation = progress * 360; // Smooth 360 rotation
-                const rotateY = progress * 180; // 3D Flip effect
+                const scale = 1 - (progress * 0.75);
+                const rotation = progress * 360;
+                const rotateY = progress * 180;
                 const opacity = progress > 0.85 ? (1 - progress) / 0.15 : 1;
 
                 flyer.style.transform = `translate3d(${currX}px, ${currY}px, 0) scale(${scale}) rotate(${rotation}deg) rotateY(${rotateY}deg)`;
@@ -716,7 +793,7 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
             if (targetNav) {
                 targetNav.classList.remove('cart-target-shake');
-                void targetNav.offsetWidth; // Force Reflow
+                void targetNav.offsetWidth;
                 targetNav.classList.add('cart-target-shake');
             }
         }
@@ -766,33 +843,33 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         const tourSteps = [
             {
                 element: '#tourAiBanner',
-                title: 'AI Smart Assistant',
-                text: 'Hey buddy! Welcome to EWU cafeteria. Here you can check out all trending combo deals and daily campus specials directly recommended by our AI engine.',
-                speech: 'Hey buddy! Welcome to CampusBite. Here you can check out all trending combo deals and daily campus specials directly recommended by our AI engine.'
+                title: 'AI Auto-Order Assistant',
+                text: 'Try speaking any food name to test the conversational price prompt and confirmation feature!',
+                speech: 'Try speaking any food name to test the conversational price prompt and confirmation feature!'
             },
             {
                 element: '#tourSearchBox',
-                title: 'Smart Search & Voice Control',
-                text: 'Looking for a specific dish? Just type it here, or tap the mic button to search using your voice instantly.',
-                speech: 'Looking for a specific dish? Just type it here, or tap the mic button to search using your voice instantly.'
+                title: 'AI Smart Input',
+                text: 'Type food name and press Enter, or use the microphone.',
+                speech: 'Type food name and press Enter, or use the microphone.'
             },
             {
                 element: '#tourFilterSection',
                 title: 'Dynamic Filter System',
-                text: 'Need food within a budget? Filter menu items easily by categories or adjust the price range slider.',
-                speech: 'Need food within a budget? Filter menu items easily by categories or adjust the price range slider.'
+                text: 'Filter menu items by category or price range easily.',
+                speech: 'Filter menu items by category or price range easily.'
             },
             {
                 element: '.food-card',
                 title: 'Interactive Food Cards',
-                text: 'Check item ratings, adjust quantity, and click Add to Cart to see our clean pop & badge bounce animations!',
-                speech: 'Check item ratings, adjust quantity, and click Add to Cart to see our clean pop & badge bounce animations!'
+                text: 'Check item ratings and add to cart with clean animations.',
+                speech: 'Check item ratings and add to cart with clean animations.'
             },
             {
                 element: '#tourCartNav',
                 title: 'Live Cart Drawer',
-                text: 'All done? Click on your cart anytime to open the side drawer and proceed straight to checkout.',
-                speech: 'All done? Click on your cart anytime to open the side drawer and proceed straight to checkout.'
+                text: 'Open cart side drawer anytime to review and checkout.',
+                speech: 'Open cart side drawer anytime to review and checkout.'
             }
         ];
 
