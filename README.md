@@ -36,25 +36,33 @@
 <img width="1865" height="866" alt="image" src="https://github.com/user-attachments/assets/7e01e122-8705-40db-875b-7c79d8497c8c" />
 
 
+## 📊 Admin Control Center & System Analytics
+*Admin Dashboard:* Comprehensive oversight of daily orders, total revenue counters, active user distribution (Students & Staff), and quick management actions.
+
 
 <img width="1877" height="896" alt="image" src="https://github.com/user-attachments/assets/d544530f-73ba-4d9a-9aed-179a635e8605" />
 
-
+##  Dynamic Menu & Category Administration
+*Menu Management:* Portal for adding, editing, and updating cafeteria food items, setting prices, toggling item availability, and organizing categories.
 
 <img width="1915" height="891" alt="image" src="https://github.com/user-attachments/assets/134b50be-1259-42fd-852c-c237acf8e7bd" />
 
-
+## Live Order Queue & Management
+*Order Tracking Panel:* Centralized admin view to inspect incoming student orders, update status (Pending, Preparing, Completed), and review payment details.
 
 <img width="1915" height="892" alt="image" src="https://github.com/user-attachments/assets/aceaac8d-df05-426a-84c0-d98b813f1529" />
 
-
+##  Cafeteria Staff & Role Management
+*Staff Control Center:* Admin tools for onboarding cafeteria staff, managing access permissions, and maintaining operational team accounts.
 
 <img width="1907" height="877" alt="image" src="https://github.com/user-attachments/assets/3859784a-b0d0-4657-8109-1bf93298c410" />
 
-
+##  Financial Reporting & Analytics
+*Sales Reports:* Detailed breakdown of cafeteria revenue, item sales history, order volumes, and downloadable summary reports for decision-making.
 <img width="1917" height="882" alt="image" src="https://github.com/user-attachments/assets/0a9f5666-f180-406d-9be6-89d91330eb39" />
 
-
+## ⚙️ Account Settings & System Preferences
+*Configuration Control:* Manage admin profile details, security settings, password updates, and system-wide operational preferences.
 
 
 <img width="1855" height="901" alt="image" src="https://github.com/user-attachments/assets/bc730344-e4f8-4c95-ba94-7a2a9c942490" />
