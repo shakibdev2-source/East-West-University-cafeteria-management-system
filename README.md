@@ -5,9 +5,24 @@
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
+
+
+<div align="center">
+  <h1 align="center">🍽️ East West University Cafeteria Management System</h1>
+  <p align="center">An automated, modern, and seamless digital cafeteria management solution.</p>
+
+  <!-- Badges -->
+  <p align="center">
+    <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" />
+    <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+    <img src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white" />
+  </p>
+</div>
+
 ## 📸 Preview & Screenshots
 
-### 1. Interactive Onboarding & Guided Tour
+### 1. Interactive Onboarding & Guided Tourr
 > **Guided Welcome Tour:** An interactive onboarding popup modal introducing new students to system features, navigation shortcuts, and menu options.
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
 
