@@ -1,2 +1,5 @@
+*.js linguist-language=JavaScript
+*.css linguist-language=CSS
+js/* linguist-language=JavaScript
+assets/js/* linguist-language=JavaScript
 campusbite_db/** linguist-detectable=true
-*.php linguist-language=PHP
