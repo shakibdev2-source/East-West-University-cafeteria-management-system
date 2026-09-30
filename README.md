@@ -1,19 +1,14 @@
+# 1. Clone the repository
+git clone [https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git](https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git)
 
+# 2. Move to your server directory (e.g. XAMPP htdocs)
+cd East-West-University-cafeteria-management-system
 
+# 3. Setup Database
+# Open phpMyAdmin -> Create 'campusbite_db' -> Import database SQL file from database/ folder
 
-<div align="center">
-  <h1 align="center">🍽️ East West University Cafeteria Management System</h1>
-  <p align="center">An automated, modern, and seamless digital cafeteria management solution.</p>
-
-  <!-- Badges -->
-  <p align="center">
-    <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" />
-    <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
-    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
-    <img src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white" />
-  </p>
-</div>
-
+# 4. Run application
+# Open browser at: http://localhost/East-West-University-cafeteria-management-system/login.php
 ## 📸 Preview & Screenshots
 
 ### 1. Interactive Onboarding & Guided Tourr
