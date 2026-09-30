@@ -478,7 +478,13 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             const text = inputText.toLowerCase().trim();
 
             if (waitingForFoodConfirmation) {
-                if (text.includes('yes') || text.includes('হ্যাঁ') || text.includes('ha') || text.includes('ok') || text.includes('sure') || text.includes('yep')) {
+                const positiveKeywords = ['yes', 'হ্যাঁ', 'ha', 'ok', 'sure', 'yep', 'ya', 'ha0'];
+                const negativeKeywords = ['no', 'না', 'nah', 'not'];
+
+                const isYes = positiveKeywords.some(word => text.includes(word));
+                const isNo = negativeKeywords.some(word => text.includes(word));
+
+                if (isYes) {
                     const cardToBuy = pendingFoodCard;
                     waitingForFoodConfirmation = false;
                     pendingFoodCard = null;
@@ -486,16 +492,18 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                     if (cardToBuy) {
                         const addBtn = cardToBuy.querySelector('.btn-add-cart');
                         const foodName = addBtn.getAttribute('data-name');
+                        
                         cardToBuy.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         addBtn.click();
+
                         speakText(`${foodName} is successfully added to your cart!`);
                         showToast(`🤖 AI Assistant: Added ${foodName} to cart!`);
                     }
                     return;
-                } else if (text.includes('no') || text.includes('না') || text.includes('nah')) {
+                } else if (isNo) {
                     waitingForFoodConfirmation = false;
                     pendingFoodCard = null;
-                    speakText("Alright, cancelled.");
+                    speakText("Alright, order cancelled.");
                     showToast("Order cancelled.");
                     return;
                 }
@@ -550,9 +558,9 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                 e.preventDefault();
                 const queryVal = searchInput.value.trim();
                 if (queryVal) {
-                    handleAiAutoBuy(queryVal);
                     searchInput.value = '';
                     autoBox.style.display = 'none';
+                    handleAiAutoBuy(queryVal);
                 }
             }
         });
