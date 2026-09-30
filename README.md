@@ -1,42 +1,15 @@
-# 🍽️ East West University Cafeteria Management System
+<div align="center">
+  <h1 align="center">🍽️ East West University Cafeteria Management System</h1>
+  <p align="center">An automated, modern, and seamless digital cafeteria management solution.</p>
 
-A comprehensive web-based digital cafeteria management system designed to streamline food ordering, online payments, and administrative oversight for university campuses.
-
----
-
-## 📜 Table of Contents
-- [About The Project](#-about-the-project)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [Preview & Screenshots](#-preview--screenshots)
-- [Local Installation Guide](#-local-installation-guide)
-- [Developer & Credits](#-developer--credits)
-
----
-
-## 📌 About The Project
-This application provides a seamless experience for students, faculty, and administrative staff to manage campus food orders efficiently. Features include real-time menu status, automated checkout with **bKash integration**, security validations (CSRF & Dynamic CAPTCHA), and an extensive admin reporting dashboard.
-
----
-
-## ✨ Key Features
-
-| Feature | Description |
-| :--- | :--- |
-| 🚀 **Onboarding Tour** | Guided welcome tour for new users with navigation shortcuts. |
-| 📊 **Live Student Dashboard** | Real-time metric counters and active order tracking. |
-| 🍔 **Interactive Menu** | Food browsing with categories, pricing, and live availability badges. |
-| 💳 **bKash Payment Gateway** | Automated order total calculation with OTP verification. |
-| 🛡️ **Security Measures** | Role-based authentication, CSRF token validation, and CAPTCHA protection. |
-| 📈 **Admin Control Center** | Analytics, daily order queue management, menu administration, and sales reporting. |
-
----
-
-## 🛠️ Tech Stack
-- **Frontend:** HTML5, CSS3 (Custom Glassmorphism UI), JavaScript (DOM Manipulation)
-- **Backend:** PHP (Role-based Authentication, Session State Management, CSRF Handling)
-- **Database:** MySQL (Optimized Relational Schema)
-
+  <!-- Badges -->
+  <p align="center">
+    <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" />
+    <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+    <img src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white" />
+  </p>
+</div>
 ---
 
 ## 📸 Preview & Screenshots
