@@ -209,11 +209,33 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         .ai-dot.active { width: 18px; border-radius: 10px; background: var(--primary); }
 
         .voice-control-btn { background: var(--bg-main); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 12px; }
+
+        .confirm-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px); z-index: 10005; display: none; align-items: center; justify-content: center; }
+        .confirm-modal-overlay.active { display: flex; }
+        .confirm-modal-card { background: var(--card-bg); border: 1px solid var(--border); width: 380px; border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .confirm-modal-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+        .confirm-modal-body { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5; }
+        .confirm-modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .btn-confirm-yes { background: linear-gradient(135deg, var(--primary), #22c55e); color: #fff; border: none; padding: 10px 24px; border-radius: 11px; font-weight: 800; cursor: pointer; font-size: 13px; flex: 1; }
+        .btn-confirm-no { background: var(--bg-main); color: var(--text-sub); border: 1px solid var(--border); padding: 10px 24px; border-radius: 11px; font-weight: 800; cursor: pointer; font-size: 13px; flex: 1; }
     </style>
 </head>
 <body>
 
     <div class="toast-container" id="toastContainer"></div>
+
+    <div class="confirm-modal-overlay" id="confirmModalOverlay">
+        <div class="confirm-modal-card">
+            <div style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"><i class="fa-solid fa-circle-question"></i></div>
+            <div class="confirm-modal-title" id="confirmModalTitle">Add Item to Cart?</div>
+            <div class="confirm-modal-body" id="confirmModalBody">Item price is ৳0. Do you want to add this to your cart?</div>
+            <div class="confirm-modal-actions">
+                <button class="btn-confirm-no" id="confirmBtnNo">No</button>
+                <button class="btn-confirm-yes" id="confirmBtnYes">Yes</button>
+            </div>
+        </div>
+    </div>
 
     <div class="ai-tour-backdrop" id="aiTourBackdrop"></div>
     <div class="ai-tour-card" id="aiTourCard" style="display: none;">
@@ -397,6 +419,50 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         let pendingFoodCard = null;
         let waitingForFoodConfirmation = false;
 
+        const confirmModal = document.getElementById('confirmModalOverlay');
+        const confirmTitle = document.getElementById('confirmModalTitle');
+        const confirmBody = document.getElementById('confirmModalBody');
+        const confirmYesBtn = document.getElementById('confirmBtnYes');
+        const confirmNoBtn = document.getElementById('confirmBtnNo');
+
+        function showConfirmationModal(card) {
+            pendingFoodCard = card;
+            waitingForFoodConfirmation = true;
+
+            const addBtn = card.querySelector('.btn-add-cart');
+            const foodName = addBtn.getAttribute('data-name');
+            const price = card.getAttribute('data-price');
+
+            confirmTitle.innerText = `Add ${foodName}?`;
+            confirmBody.innerText = `${foodName} price is ৳${price}. Do you want to add this to your cart?`;
+            confirmModal.classList.add('active');
+
+            const promptMsg = `${foodName} price is ${price} Taka. Do you want to add this to cart?`;
+            speakText(promptMsg);
+        }
+
+        function handleModalDecision(isConfirmed) {
+            confirmModal.classList.remove('active');
+            if (isConfirmed && pendingFoodCard) {
+                const addBtn = pendingFoodCard.querySelector('.btn-add-cart');
+                const foodName = addBtn.getAttribute('data-name');
+                
+                pendingFoodCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                addBtn.click();
+
+                speakText(`${foodName} is successfully added to your cart!`);
+                showToast(`🤖 AI Assistant: Added ${foodName} to cart!`);
+            } else if (!isConfirmed && waitingForFoodConfirmation) {
+                speakText("Alright, order cancelled.");
+                showToast("Order cancelled.");
+            }
+            waitingForFoodConfirmation = false;
+            pendingFoodCard = null;
+        }
+
+        confirmYesBtn.addEventListener('click', () => handleModalDecision(true));
+        confirmNoBtn.addEventListener('click', () => handleModalDecision(false));
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playBeep(freq = 600, duration = 0.08) {
             if (!isSoundEnabled) return;
@@ -485,26 +551,10 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                 const isNo = negativeKeywords.some(word => text.includes(word));
 
                 if (isYes) {
-                    const cardToBuy = pendingFoodCard;
-                    waitingForFoodConfirmation = false;
-                    pendingFoodCard = null;
-
-                    if (cardToBuy) {
-                        const addBtn = cardToBuy.querySelector('.btn-add-cart');
-                        const foodName = addBtn.getAttribute('data-name');
-                        
-                        cardToBuy.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        addBtn.click();
-
-                        speakText(`${foodName} is successfully added to your cart!`);
-                        showToast(`🤖 AI Assistant: Added ${foodName} to cart!`);
-                    }
+                    handleModalDecision(true);
                     return;
                 } else if (isNo) {
-                    waitingForFoodConfirmation = false;
-                    pendingFoodCard = null;
-                    speakText("Alright, order cancelled.");
-                    showToast("Order cancelled.");
+                    handleModalDecision(false);
                     return;
                 }
             }
@@ -534,19 +584,10 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             });
 
             if (matchedCard) {
-                pendingFoodCard = matchedCard;
-                waitingForFoodConfirmation = true;
-                const addBtn = matchedCard.querySelector('.btn-add-cart');
-                const foodName = addBtn.getAttribute('data-name');
-                const price = matchedCard.getAttribute('data-price');
-
                 matchedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 matchedCard.style.borderColor = 'var(--primary)';
                 setTimeout(() => { matchedCard.style.borderColor = 'var(--border)'; }, 2000);
-
-                const promptMsg = `${foodName} price is ${price} Taka. Do you want to add this to cart? Please say Yes or No.`;
-                speakText(promptMsg);
-                showToast(`🤖 AI: ${foodName} price is ৳${price}. Do you want to add it? (Say Yes/No)`);
+                showConfirmationModal(matchedCard);
             } else {
                 speakText(`Sorry, I could not find any food item matching ${inputText}.`);
                 showToast(`🤖 AI Assistant: Item "${inputText}" not found.`);
