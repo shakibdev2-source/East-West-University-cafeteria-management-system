@@ -14,6 +14,10 @@
 
 ## 📸 Preview & Screenshots
 
+## login interface 
+<img width="1917" height="917" alt="image" src="https://github.com/user-attachments/assets/73af0440-6171-4e9e-8934-4dea816a8412" />
+
+
 ### 1. Interactive Onboarding & Guided Tourr
 > **Guided Welcome Tour:** An interactive onboarding popup modal introducing new students to system features, navigation shortcuts, and menu options.
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
