@@ -9,6 +9,13 @@
 
   <!-- Badges -->
   <p>
+<p>
+  <img src="https://img.shields.io/badge/CSRF_Protected-Shield-green?style=for-the-badge&logo=shield&logoColor=white" alt="CSRF Protection" />
+  <img src="https://img.shields.io/badge/SQL_Injection-Prevented-blue?style=for-the-badge&logo=mariadb&logoColor=white" alt="SQLi Prevention" />
+  <img src="https://img.shields.io/badge/XSS-Sanitized-orange?style=for-the-badge&logo=codeforces&logoColor=white" alt="XSS Defense" />
+  <img src="https://img.shields.io/badge/CAPTCHA-Session_Protected-red?style=for-the-badge&logo=google&logoColor=white" alt="CAPTCHA" />
+  <img src="https://img.shields.io/badge/Bcrypt-Password_Hashing-purple?style=for-the-badge&logo=1password&logoColor=white" alt="Bcrypt Hashing" />
+</p>
     <img src="https://img.shields.io/badge/AI_Powered-Bot-FF6F61?style=for-the-badge&logo=openai&logoColor=white" alt="AI Powered" />
     <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP" />
     <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
