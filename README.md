@@ -9,6 +9,7 @@
 
   <!-- Badges -->
   <p>
+    <img src="https://img.shields.io/badge/AI_Powered-Bot-FF6F61?style=for-the-badge&logo=openai&logoColor=white" alt="AI Powered" />
     <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP" />
     <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
