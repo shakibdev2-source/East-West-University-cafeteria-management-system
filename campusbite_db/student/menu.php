@@ -49,45 +49,46 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #16a34a;
-            --primary-hover: #15803d;
-            --primary-light: #dcfce7;
-            --primary-glow: rgba(22, 163, 74, 0.35);
-            --bg-main: #f8fafc;
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --primary-light: rgba(16, 185, 129, 0.12);
+            --primary-glow: rgba(16, 185, 129, 0.25);
+            --bg-main: #f4f6f9;
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-sub: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
         }
 
         [data-theme="dark"] {
-            --bg-main: #0b1120;
-            --card-bg: #1e293b;
+            --bg-main: #070d1b;
+            --card-bg: #111c33;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
-            --border: #334155;
-            --primary-light: rgba(22, 163, 74, 0.15);
-            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --border: #1e293b;
+            --primary-light: rgba(16, 185, 129, 0.18);
+            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease; }
         body { display: flex; background: var(--bg-main); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        .sidebar { width: 260px; background: var(--card-bg); border-right: 1px solid var(--border); padding: 24px 18px; display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; }
-        .brand { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-        .brand-icon { background: linear-gradient(135deg, var(--primary), #22c55e); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; box-shadow: 0 8px 18px var(--primary-glow); }
+        .sidebar { width: 280px; background: var(--card-bg); border-right: 1px solid var(--border); padding: 28px 20px; display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; backdrop-filter: blur(10px); }
+        .brand { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; margin-bottom: 32px; letter-spacing: -0.5px; }
+        .brand-icon { background: linear-gradient(135deg, var(--primary), #34d399); width: 44px; height: 44px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; box-shadow: 0 8px 20px var(--primary-glow); }
 
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-        .nav-item a { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; text-decoration: none; color: var(--text-sub); font-size: 13.5px; font-weight: 600; border-radius: 12px; }
-        .nav-item.active a { background: var(--primary-light); color: var(--primary); font-weight: 700; }
-        .nav-item a:hover { background: var(--primary-light); color: var(--primary); }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .nav-item a { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; text-decoration: none; color: var(--text-sub); font-size: 14px; font-weight: 600; border-radius: var(--radius-sm); }
+        .nav-item.active a { background: var(--primary-light); color: var(--primary); font-weight: 700; box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2); }
+        .nav-item a:hover { background: var(--primary-light); color: var(--primary); transform: translateX(4px); }
 
-        .cart-badge { background: linear-gradient(135deg, var(--primary), #22c55e); color: #fff; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 800; display: inline-block; }
+        .cart-badge { background: linear-gradient(135deg, var(--primary), #34d399); color: #fff; font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 800; display: inline-block; box-shadow: 0 4px 10px var(--primary-glow); }
         
-        .cart-target-shake {
-            animation: cartShake 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-        }
+        .cart-target-shake { animation: cartShake 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
 
         @keyframes cartShake {
             10%, 90% { transform: scale(1.2) translate3d(-1px, 0, 0); }
@@ -97,18 +98,19 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             100% { transform: scale(1) translate3d(0, 0, 0); }
         }
 
-        .main-content { flex: 1; margin-left: 260px; padding: 24px 32px; width: calc(100% - 260px); max-width: 1440px; }
+        .main-content { flex: 1; margin-left: 280px; padding: 32px; width: calc(100% - 280px); max-width: 1480px; }
 
-        .ai-banner { background: linear-gradient(135deg, #16a34a, #15803d); border-radius: 20px; padding: 20px 24px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; box-shadow: 0 12px 30px var(--primary-glow); position: relative; overflow: hidden; }
-        .ai-banner::after { content: ''; position: absolute; right: -20px; top: -20px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+        .ai-banner { background: linear-gradient(135deg, #059669, #10b981, #34d399); border-radius: var(--radius-lg); padding: 28px 32px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; box-shadow: 0 20px 40px var(--primary-glow); position: relative; overflow: hidden; }
+        .ai-banner::after { content: ''; position: absolute; right: -30px; top: -30px; width: 180px; height: 180px; background: rgba(255,255,255,0.12); border-radius: 50%; pointer-events: none; }
 
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 12px 22px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; }
-        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--card-bg); padding: 16px 24px; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; }
+        .header-actions { display: flex; align-items: center; gap: 14px; }
 
-        .search-box { position: relative; width: 300px; }
-        .search-box input { width: 100%; background: var(--bg-main); border: 1px solid var(--border); border-radius: 11px; padding: 9px 38px 9px 38px; font-size: 13px; color: var(--text-main); outline: none; }
-        .search-box .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
-        .search-box .mic-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px; transition: color 0.3s, transform 0.3s; }
+        .search-box { position: relative; width: 320px; }
+        .search-box input { width: 100%; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 40px 11px 40px; font-size: 13.5px; color: var(--text-main); outline: none; }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        .search-box .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
+        .search-box .mic-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary); cursor: pointer; font-size: 15px; transition: transform 0.3s; }
         .search-box .mic-btn.listening { color: #ef4444; animation: pulse 1.5s infinite ease-in-out; }
 
         @keyframes pulse {
@@ -117,108 +119,135 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             100% { transform: translateY(-50%) scale(1); }
         }
 
-        .search-autocomplete { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 50; display: none; overflow: hidden; max-height: 220px; overflow-y: auto; }
-        .autocomplete-item { padding: 10px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); transition: background-color 0.3s ease; }
+        .search-autocomplete { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 50; display: none; overflow: hidden; max-height: 240px; overflow-y: auto; }
+        .autocomplete-item { padding: 12px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
         .autocomplete-item:hover { background: var(--primary-light); color: var(--primary); }
 
-        .action-icon-btn { background: var(--bg-main); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 14px; }
+        .action-icon-btn { background: var(--bg-main); border: 1px solid var(--border); width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .action-icon-btn:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
 
-        .filter-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; }
-        .category-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-        .cat-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 30px; font-size: 12.5px; font-weight: 700; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: all 0.3s ease; }
-        .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-
-        .price-filter { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 700; background: var(--card-bg); padding: 6px 14px; border-radius: 12px; border: 1px solid var(--border); }
-
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .food-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 16px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; }
-        .food-card:hover { border-color: var(--primary); transform: translateY(-6px); box-shadow: 0 15px 35px -10px var(--primary-glow); }
-
-        .badge-group { position: absolute; top: 14px; left: 14px; display: flex; align-items: center; gap: 6px; z-index: 2; }
-        .rating-badge { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); color: #f59e0b; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px; }
-        .bestseller-badge { background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3); }
-
-        .fav-btn { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; background: var(--card-bg); border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-sub); z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s ease; }
-        .fav-btn.active { color: #ef4444; border-color: #ef4444; transform: scale(1.1); }
-
-        .food-image-wrapper { width: 100%; height: 170px; border-radius: 14px; background: var(--bg-main); margin-bottom: 12px; display: flex; align-items: center; justify-content: center; padding: 8px; overflow: hidden; }
-        .food-image-wrapper img { max-width: 100%; max-height: 100%; object-fit: cover; border-radius: 10px; transition: transform 0.5s ease-out; }
-
-        .flying-square-item {
-            position: fixed;
-            z-index: 99999;
-            object-fit: cover;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px var(--primary-glow);
-            border: 3px solid var(--primary);
-            pointer-events: none;
-            will-change: transform, opacity;
-            top: 0;
-            left: 0;
-        }
-
-        .quantity-controller { display: flex; align-items: center; background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px; padding: 2px; gap: 4px; margin: 10px 0; }
-        .q-btn { width: 26px; height: 26px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); font-weight: 700; cursor: pointer; transition: background-color 0.2s ease; }
-        .q-input { width: 100%; text-align: center; border: none; background: transparent; font-size: 13px; font-weight: 800; color: var(--text-main); outline: none; }
-
-        .btn-add-cart { width: 100%; background: linear-gradient(135deg, var(--primary), #22c55e); color: #fff; border: none; padding: 10px; border-radius: 11px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px var(--primary-glow); transition: all 0.4s ease; }
+        .filter-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+        .category-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+        .category-container::-webkit-scrollbar { display: none; }
         
-        .btn-add-cart.added-success { 
-            background: linear-gradient(135deg, #0f172a, #334155) !important; 
-            transform: scale(0.96); 
-        }
+        .cat-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 700; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 6px 15px var(--primary-glow); }
+        .cat-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-        .cart-drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+        .price-filter { display: flex; align-items: center; gap: 12px; font-size: 12.5px; font-weight: 700; background: var(--card-bg); padding: 8px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border); box-shadow: var(--shadow); }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px; }
+        .food-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; }
+        .food-card:hover { border-color: var(--primary); transform: translateY(-8px); box-shadow: 0 20px 40px -10px var(--primary-glow); }
+
+        .badge-group { position: absolute; top: 16px; left: 16px; display: flex; align-items: center; gap: 6px; z-index: 2; }
+        .rating-badge { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(10px); color: #fbbf24; font-size: 11.5px; font-weight: 800; padding: 5px 10px; border-radius: 12px; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .bestseller-badge { background: linear-gradient(135deg, #059669, #10b981); color: #fff; font-size: 10.5px; font-weight: 800; padding: 5px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+
+        .fav-btn { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: var(--card-bg); border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-sub); z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        .fav-btn.active { color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.1); transform: scale(1.1); }
+
+        .food-image-wrapper { width: 100%; height: 180px; border-radius: var(--radius-sm); background: var(--bg-main); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; padding: 10px; overflow: hidden; }
+        .food-image-wrapper img { max-width: 100%; max-height: 100%; object-fit: cover; border-radius: 10px; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .food-card:hover .food-image-wrapper img { transform: scale(1.06); }
+
+        .flying-square-item { position: fixed; z-index: 99999; object-fit: cover; border-radius: var(--radius-sm); box-shadow: 0 20px 40px var(--primary-glow); border: 3px solid var(--primary); pointer-events: none; will-change: transform, opacity; top: 0; left: 0; }
+
+        .quantity-controller { display: flex; align-items: center; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; gap: 6px; margin: 12px 0; }
+        .q-btn { width: 30px; height: 30px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text-main); font-weight: 700; cursor: pointer; }
+        .q-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .q-input { width: 100%; text-align: center; border: none; background: transparent; font-size: 14px; font-weight: 800; color: var(--text-main); outline: none; }
+
+        .btn-add-cart { width: 100%; background: linear-gradient(135deg, var(--primary), #34d399); color: #fff; border: none; padding: 12px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 18px var(--primary-glow); }
+        .btn-add-cart:hover { filter: brightness(1.08); transform: translateY(-2px); }
+        .btn-add-cart.added-success { background: linear-gradient(135deg, #0f172a, #334155) !important; transform: scale(0.97); }
+
+        .cart-drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .cart-drawer-overlay.active { opacity: 1; pointer-events: auto; }
-        .cart-drawer { position: fixed; top: 0; right: -380px; width: 360px; height: 100vh; background: var(--card-bg); z-index: 2001; padding: 24px; box-shadow: -10px 0 30px rgba(0,0,0,0.2); transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; }
+        .cart-drawer { position: fixed; top: 0; right: -420px; width: 400px; height: 100vh; background: var(--card-bg); z-index: 2001; padding: 28px; box-shadow: -20px 0 50px rgba(0,0,0,0.25); transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; border-left: 1px solid var(--border); }
         .cart-drawer.active { right: 0; }
 
-        .drawer-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .drawer-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
 
-        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 8px; }
-        .toast { background: #0f172a; color: #fff; padding: 12px 18px; border-radius: 12px; font-size: 13px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) 2.5s forwards; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: #0f172a; color: #fff; padding: 14px 20px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.1); animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; }
+        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(12px); } }
 
-        .ai-tour-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); z-index: 10000; opacity: 0; pointer-events: none; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .ai-tour-backdrop { position: fixed; inset: 0; background: rgba(7, 13, 27, 0.75); backdrop-filter: blur(12px); z-index: 10000; opacity: 0; pointer-events: none; transition: all 0.4s ease; }
         .ai-tour-backdrop.active { opacity: 1; pointer-events: auto; }
 
-        .tour-highlighted-element { position: relative !important; z-index: 10001 !important; box-shadow: 0 0 0 4px var(--primary), 0 0 35px var(--primary-glow) !important; border-radius: 16px !important; transition: all 0.4s ease; }
+        .tour-highlighted-element { position: relative !important; z-index: 10001 !important; box-shadow: 0 0 0 6px var(--primary), 0 0 50px var(--primary-glow) !important; border-radius: var(--radius-md) !important; }
 
-        .ai-tour-card { position: fixed; z-index: 10002; width: 360px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 22px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35), 0 0 30px var(--primary-glow); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; gap: 14px; }
+        /* Modernized Ultra-Sleek Popup Card */
+        .ai-tour-card {
+            position: fixed;
+            z-index: 10002;
+            width: 410px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.3), 0 0 35px var(--primary-glow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(20px);
+            animation: cardPopUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-        .ai-tour-progress-bar { width: 100%; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
-        .ai-tour-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #22c55e); width: 20%; transition: width 0.4s ease; }
+        @keyframes cardPopUp {
+            from { opacity: 0; transform: translateY(15px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .ai-tour-progress-bar { width: 100%; height: 6px; background: var(--bg-main); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+        .ai-tour-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #34d399); width: 20%; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 10px; }
 
         .ai-tour-top { display: flex; align-items: center; justify-content: space-between; }
-        .ai-badge { background: var(--primary-light); color: var(--primary); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+        
+        .ai-badge { 
+            background: var(--primary-light); 
+            color: var(--primary); 
+            font-size: 12px; 
+            font-weight: 800; 
+            padding: 7px 14px; 
+            border-radius: 30px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2);
+        }
+        
         .ai-wave-icon { display: inline-block; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: pulseWave 1.5s infinite; }
         
         @keyframes pulseWave {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 var(--primary-glow); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+            70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        .ai-tour-title { font-size: 15px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-        .ai-tour-body { font-size: 13px; color: var(--text-sub); line-height: 1.6; font-weight: 500; }
+        .ai-tour-title { font-size: 18px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 10px; margin-top: 6px; letter-spacing: -0.4px; }
+        .ai-tour-body { font-size: 14px; color: var(--text-sub); line-height: 1.65; font-weight: 500; }
         
-        .ai-tour-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+        .ai-tour-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--border); }
         .ai-tour-dots { display: flex; gap: 6px; }
-        .ai-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.4s ease; }
-        .ai-dot.active { width: 18px; border-radius: 10px; background: var(--primary); }
+        .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s ease; }
+        .ai-dot.active { width: 22px; border-radius: 10px; background: var(--primary); box-shadow: 0 2px 8px var(--primary-glow); }
 
-        .voice-control-btn { background: var(--bg-main); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 12px; }
+        .voice-control-btn { background: var(--bg-main); border: 1px solid var(--border); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 13.5px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .voice-control-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-        .confirm-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px); z-index: 10005; display: none; align-items: center; justify-content: center; }
+        .confirm-modal-overlay { position: fixed; inset: 0; background: rgba(7, 13, 27, 0.65); backdrop-filter: blur(6px); z-index: 10005; display: none; align-items: center; justify-content: center; }
         .confirm-modal-overlay.active { display: flex; }
-        .confirm-modal-card { background: var(--card-bg); border: 1px solid var(--border); width: 380px; border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .confirm-modal-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
-        .confirm-modal-body { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5; }
-        .confirm-modal-actions { display: flex; gap: 10px; justify-content: center; }
-        .btn-confirm-yes { background: linear-gradient(135deg, var(--primary), #22c55e); color: #fff; border: none; padding: 10px 24px; border-radius: 11px; font-weight: 800; cursor: pointer; font-size: 13px; flex: 1; }
-        .btn-confirm-no { background: var(--bg-main); color: var(--text-sub); border: 1px solid var(--border); padding: 10px 24px; border-radius: 11px; font-weight: 800; cursor: pointer; font-size: 13px; flex: 1; }
+        .confirm-modal-card { background: var(--card-bg); border: 1px solid var(--border); width: 400px; border-radius: var(--radius-lg); padding: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.35); text-align: center; animation: modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes modalPop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .confirm-modal-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; color: var(--text-main); }
+        .confirm-modal-body { font-size: 13.5px; color: var(--text-sub); margin-bottom: 24px; line-height: 1.6; }
+        .confirm-modal-actions { display: flex; gap: 12px; justify-content: center; }
+        .btn-confirm-yes { background: linear-gradient(135deg, var(--primary), #34d399); color: #fff; border: none; padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 800; cursor: pointer; font-size: 13.5px; flex: 1; box-shadow: 0 4px 12px var(--primary-glow); }
+        .btn-confirm-no { background: var(--bg-main); color: var(--text-sub); border: 1px solid var(--border); padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 800; cursor: pointer; font-size: 13.5px; flex: 1; }
+        .btn-confirm-no:hover { background: var(--border); color: var(--text-main); }
     </style>
 </head>
 <body>
@@ -227,7 +256,7 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
     <div class="confirm-modal-overlay" id="confirmModalOverlay">
         <div class="confirm-modal-card">
-            <div style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"><i class="fa-solid fa-circle-question"></i></div>
+            <div style="font-size: 36px; color: var(--primary); margin-bottom: 12px;"><i class="fa-solid fa-circle-question"></i></div>
             <div class="confirm-modal-title" id="confirmModalTitle">Add Item to Cart?</div>
             <div class="confirm-modal-body" id="confirmModalBody">Item price is ৳0. Do you want to add this to your cart?</div>
             <div class="confirm-modal-actions">
@@ -244,9 +273,9 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
         </div>
         <div class="ai-tour-top">
             <div class="ai-badge"><span class="ai-wave-icon"></span> AI Voice Assistant</div>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="display: flex; gap: 10px; align-items: center;">
                 <button class="voice-control-btn" id="aiVoiceToggle" title="Toggle Voice Voiceover"><i class="fa-solid fa-volume-high"></i></button>
-                <button id="aiTourSkip" style="background: none; border: none; font-size: 16px; color: var(--text-sub); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+                <button id="aiTourSkip" style="background: none; border: none; font-size: 18px; color: var(--text-sub); cursor: pointer; padding: 4px;" title="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </div>
         <div>
@@ -261,9 +290,9 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                 <span class="ai-dot"></span>
                 <span class="ai-dot"></span>
             </div>
-            <div style="display: flex; gap: 8px;">
-                <button class="action-icon-btn" id="aiTourPrev" style="width: auto; padding: 0 12px; font-weight: 700; font-size: 12px;">Back</button>
-                <button class="btn-add-cart" id="aiTourNext" style="width: auto; padding: 8px 16px; font-size: 12px;">Next <i class="fa-solid fa-arrow-right"></i></button>
+            <div style="display: flex; gap: 10px;">
+                <button class="action-icon-btn" id="aiTourPrev" style="width: auto; padding: 0 16px; font-weight: 700; font-size: 13px; border-radius: var(--radius-sm);">Back</button>
+                <button class="btn-add-cart" id="aiTourNext" style="width: auto; padding: 10px 20px; font-size: 13px;">Next <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
     </div>
@@ -271,19 +300,19 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
     <div class="cart-drawer-overlay" id="drawerOverlay"></div>
     <div class="cart-drawer" id="cartDrawer">
         <div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="font-weight: 800;"><i class="fa-solid fa-bag-shopping" style="color: var(--primary);"></i> Live Cart Overview</h3>
-                <button id="closeDrawer" style="background: none; border: none; font-size: 18px; color: var(--text-sub); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-bag-shopping" style="color: var(--primary);"></i> Live Cart Overview</h3>
+                <button id="closeDrawer" style="background: none; border: none; font-size: 20px; color: var(--text-sub); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="drawerItemsList" style="max-height: 60vh; overflow-y: auto;"></div>
+            <div id="drawerItemsList" style="max-height: 62vh; overflow-y: auto;"></div>
         </div>
 
         <div>
-            <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 14px; font-size: 15px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 16px; font-size: 16px;">
                 <span>Total Amount:</span>
                 <span id="drawerTotalAmount" style="color: var(--primary);">৳0.00</span>
             </div>
-            <a href="checkout.php" class="btn-add-cart" style="text-decoration: none; text-align: center;">Proceed to Checkout <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="checkout.php" class="btn-add-cart" style="text-decoration: none; text-align: center; border-radius: var(--radius-sm);">Proceed to Checkout <i class="fa-solid fa-arrow-right"></i></a>
         </div>
     </div>
 
@@ -314,15 +343,15 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
     <div class="main-content">
         <div class="ai-banner" id="tourAiBanner">
             <div>
-                <span style="background: rgba(255,255,255,0.2); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.5px;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI AUTO-ORDER ASSISTANT</span>
-                <h2 style="font-size: 18px; font-weight: 800; margin-top: 6px;">Say Food Name, AI will tell price & ask to buy!</h2>
-                <p style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Try saying "Chicken", "Burger", or any food name.</p>
+                <span style="background: rgba(255,255,255,0.2); font-size: 11.5px; font-weight: 800; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px; backdrop-filter: blur(5px);"><i class="fa-solid fa-wand-magic-sparkles"></i> AI AUTO-ORDER ASSISTANT</span>
+                <h2 style="font-size: 20px; font-weight: 800; margin-top: 8px; letter-spacing: -0.5px;">Say Food Name, AI will tell price & ask to buy!</h2>
+                <p style="font-size: 13px; opacity: 0.95; margin-top: 4px;">Try saying "Chicken", "Burger", or any food name.</p>
             </div>
-            <button id="startAiTourBtn" type="button" style="background: #fff; color: var(--primary); border: none; padding: 9px 16px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; position: relative; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"><i class="fa-solid fa-play"></i> Start AI Tour</button>
+            <button id="startAiTourBtn" type="button" style="background: #fff; color: var(--primary); border: none; padding: 11px 20px; border-radius: var(--radius-sm); font-weight: 800; font-size: 13px; cursor: pointer; position: relative; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.15);"><i class="fa-solid fa-play"></i> Start AI Tour</button>
         </div>
 
         <div class="top-header">
-            <div style="font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-utensils" style="color: var(--primary);"></i> Menu Catalog</div>
+            <div style="font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;"><i class="fa-solid fa-utensils" style="color: var(--primary);"></i> Menu Catalog</div>
             
             <div class="header-actions">
                 <div class="search-box" id="tourSearchBox">
@@ -341,7 +370,7 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
             <div class="category-container">
                 <button class="cat-btn active" data-category="all">
                     <i class="fa-solid fa-border-all"></i> All Items 
-                    <span style="background: rgba(0,0,0,0.08); font-size: 11px; padding: 1px 6px; border-radius: 10px;"><?= $total_food_count; ?></span>
+                    <span style="background: rgba(0,0,0,0.08); font-size: 11px; padding: 2px 8px; border-radius: 10px;"><?= $total_food_count; ?></span>
                 </button>
                 <?php if ($categories_result && mysqli_num_rows($categories_result) > 0): ?>
                     <?php while ($cat = mysqli_fetch_assoc($categories_result)): ?>
@@ -386,9 +415,9 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                         </div>
 
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-                                <h3 class="card-food-name" style="font-size: 15px; font-weight: 800;"><?= htmlspecialchars($food_name); ?></h3>
-                                <span style="font-size: 15px; font-weight: 800; color: var(--primary);">৳<?= number_format($price, 2); ?></span>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <h3 class="card-food-name" style="font-size: 15.5px; font-weight: 800; letter-spacing: -0.3px;"><?= htmlspecialchars($food_name); ?></h3>
+                                <span style="font-size: 16px; font-weight: 800; color: var(--primary);">৳<?= number_format($price, 2); ?></span>
                             </div>
 
                             <div class="quantity-controller">
@@ -397,9 +426,9 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                                 <button class="q-btn btn-plus" type="button">+</button>
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px;">
                                 <span>Total:</span>
-                                <span class="calculated-price" style="color: var(--text-main);">৳<?= number_format($price, 2); ?></span>
+                                <span class="calculated-price" style="color: var(--text-main); font-weight: 800;">৳<?= number_format($price, 2); ?></span>
                             </div>
                         </div>
 
@@ -526,7 +555,7 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                     matches++;
                     const item = document.createElement('div');
                     item.className = 'autocomplete-item';
-                    item.innerHTML = `<span>${card.querySelector('.card-food-name').innerText}</span> <span style="color: var(--primary);">৳${price}</span>`;
+                    item.innerHTML = `<span>${card.querySelector('.card-food-name').innerText}</span> <span style="color: var(--primary); font-weight: 800;">৳${price}</span>`;
                     item.addEventListener('click', () => {
                         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         card.style.borderColor = 'var(--primary)';
@@ -736,8 +765,8 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
 
             if (localCartState.length === 0) {
                 list.innerHTML = `
-                    <div style="font-size: 13px; color: var(--text-sub); text-align: center; padding: 40px 0;">
-                        <i class="fa-solid fa-basket-shopping" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i>
+                    <div style="font-size: 13.5px; color: var(--text-sub); text-align: center; padding: 50px 0;">
+                        <i class="fa-solid fa-basket-shopping" style="font-size: 36px; margin-bottom: 12px; opacity: 0.4;"></i>
                         <p>Your cart is empty.</p>
                     </div>`;
                 totalElem.innerText = `৳0.00`;
@@ -754,12 +783,12 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                 div.className = 'drawer-item';
                 div.innerHTML = `
                     <div>
-                        <div style="font-weight: 800; font-size: 13px;">${item.name}</div>
-                        <div style="font-size: 11px; color: var(--text-sub);">৳${item.price} x ${item.qty}</div>
+                        <div style="font-weight: 800; font-size: 13.5px;">${item.name}</div>
+                        <div style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">৳${item.price} x ${item.qty}</div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-weight: 800; font-size: 13px; color: var(--primary);">৳${sub.toFixed(2)}</span>
-                        <button onclick="removeCartItem(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-weight: 800; font-size: 13.5px; color: var(--primary);">৳${sub.toFixed(2)}</span>
+                        <button onclick="removeCartItem(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px;"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 list.appendChild(div);
@@ -998,11 +1027,11 @@ $total_food_count = $foods_result ? mysqli_num_rows($foods_result) : 0;
                 let popLeft = rect.left;
                 let popTop = rect.bottom + 18;
 
-                if (popTop + 240 > window.innerHeight) {
-                    popTop = rect.top - 250;
+                if (popTop + 260 > window.innerHeight) {
+                    popTop = rect.top - 270;
                 }
-                if (popLeft + 360 > window.innerWidth) {
-                    popLeft = window.innerWidth - 380;
+                if (popLeft + 410 > window.innerWidth) {
+                    popLeft = window.innerWidth - 430;
                 }
 
                 card.style.left = `${Math.max(20, popLeft)}px`;
