@@ -1,3 +1,4 @@
+
 <div align="center">
   <h1>🍽️ East West University Cafeteria Management System</h1>
   <p>An automated, modern, and seamless digital cafeteria management solution.</p>
@@ -14,6 +15,9 @@
 ---
 
 ## 📌 Overview
+
+https://github.com/user-attachments/assets/401623cf-3d9f-4f35-b216-640809058613
+
 The **East West University Cafeteria Management System** is a full-stack web application designed to automate campus cafeteria operations. It simplifies food ordering for students, automates billing & payments, and provides real-time management and analytics tools for cafeteria administrators and staff.
 
 ---
