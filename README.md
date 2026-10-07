@@ -14,44 +14,6 @@
 
 ## 📸 Preview & Screenshots
 
-### 1. Interactive Onboarding & Guided Tour
-*An interactive onboarding popup modal introducing new students to system features.*
-![Guided Tour](https://github.com/user-attachments/assets/501c2a7e-001f-48a0-8f07-9ed48b687587)
-
-### 2. Student Dashboard Overview
-*Clean and intuitive interface featuring quick access shortcuts and live order status tracking.*
-![Student Dashboard](https://github.com/user-attachments/assets/2d66efab-4308-4a33-804b-7dba4c08118f)
-
-### 3. Interactive Food Menu & Ordering
-*Real-time food item browsing with categories, pricing, and availability badges.*
-![Food Menu](https://github.com/user-attachments/assets/a232f386-302a-4f51-b8ef-51a87b5a83cd)
-
-### 4. Direct Checkout & Payment Integration
-*Automated order summary calculation with integrated digital payment options.*
-![Checkout](https://github.com/user-attachments/assets/c5a3fb1c-2ee1-4d92-a1b7-95ec9381e6a9)
-
-### 💳 bKash Payment Gateway
-*Seamless digital payment system with automated OTP verification.*
-![bKash Payment](https://github.com/user-attachments/assets/1360c7f2-bd54-4ca8-95f0-a11bd9027477)
-
-### 5. Admin Control Center & Analytics
-*Comprehensive oversight of daily orders, revenue counters, and active user distribution.*
-![Admin Panel](https://github.com/user-attachments/assets/958d0482-aa00-4b8c-b033-918ee0e9fb24)
-
----
-
-## 💻 Local Installation Guide
-
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git](https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git)
-
-
-
-
-
-## 📸 Preview & Screenshots
-
 ### 1. Interactive Onboarding & Guided Tourr
 > **Guided Welcome Tour:** An interactive onboarding popup modal introducing new students to system features, navigation shortcuts, and menu options.
 <img width="1900" height="898" alt="image" src="https://github.com/user-attachments/assets/a37890b1-e326-4077-a4b3-a530ba65be46" />
