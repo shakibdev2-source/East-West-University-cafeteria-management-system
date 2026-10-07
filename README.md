@@ -118,3 +118,40 @@ The **East West University Cafeteria Management System** is a full-stack web app
 1. **Clone this repository:**
    ```bash
    git clone [https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git](https://github.com/shakibdev2-source/East-West-University-cafeteria-management-system.git)
+
+
+
+**Team Roles & Individual Contributions**
+
+
+**Md. Shakib Hossan** —Lead Full-Stack Developer & Technical Architect
+Frontend & UI Design:
+
+Built responsive multi-role dynamic interfaces using HTML5, CSS3 (Custom Styling & Glassmorphism Design), and JavaScript (DOM Manipulation).
+
+Integrated Font Awesome Icons (fa-solid fa-user, fa-lock, fa-eye, etc.) for intuitive UX and password-toggle features.
+
+Backend & Architecture:
+
+Developed multi-user role authentication and dashboards for Student, Faculty, Staff, and Admin portals.
+
+Implemented core business logic for Cart Management, Checkout Systems, Order Tracking, Feedback Modules, and Authentication (login.php, register.php, logout.php).
+
+Security Implementation:
+
+Integrated CSRF Token Validation (csrf_token) in auth forms to prevent Cross-Site Request Forgery attacks.
+
+Developed custom Dynamic CAPTCHA Verification Systems (SESSION['captcha_student']) and Interactive Refresh logic to protect login forms from bot attacks.
+
+Secured sensitive dynamic data rendering using htmlspecialchars().
+
+Database Architecture & Refactoring:
+
+Designed, optimized, and refactored the relational MySQL database schema (database/), ERD, tables, and relational SQL queries.
+
+Handled full session-state management and dynamic SQL integration across all portal modules.
+
+
+
+📄 License
+This project is licensed under the MIT License
