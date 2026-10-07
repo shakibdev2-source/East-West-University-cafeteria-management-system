@@ -1,4 +1,8 @@
 
+
+
+
+
 <div align="center">
   <h1>🍽️ East West University Cafeteria Management System</h1>
   <p>An automated, modern, and seamless digital cafeteria management solution.</p>
@@ -15,6 +19,8 @@
 ---
 
 ## 📌 Overview
+
+https://github.com/user-attachments/assets/d909ba27-71c5-40f1-bbd1-dde8bcfb7146
 
 https://github.com/user-attachments/assets/401623cf-3d9f-4f35-b216-640809058613
 
