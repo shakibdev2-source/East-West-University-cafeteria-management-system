@@ -10,6 +10,11 @@
   <!-- Badges -->
   <p>
 <p>
+  <img src="https://img.shields.io/badge/Access_Control-Role_Based-blue?style=for-the-badge&logo=keycloak&logoColor=white" alt="Role-Based Access Control" />
+  <img src="https://img.shields.io/badge/Session_Security-Strict_Verification-00599C?style=for-the-badge&logo=jsonwebtokens&logoColor=white" alt="Session Management" />
+  <img src="https://img.shields.io/badge/Input_Validation-Sanitized-success?style=for-the-badge&logo=checkmarx&logoColor=white" alt="Input Validation" />
+  <img src="https://img.shields.io/badge/OWASP-Top_10_Compliant-orange?style=for-the-badge&logo=owasp&logoColor=white" alt="OWASP Compliant" />
+  <img src="https://img.shields.io/badge/Authentication-Multi_Role_Portal-purple?style=for-the-badge&logo=shield&logoColor=white" alt="Multi-Role Auth" />
   <img src="https://img.shields.io/badge/CSRF_Protected-Shield-green?style=for-the-badge&logo=shield&logoColor=white" alt="CSRF Protection" />
   <img src="https://img.shields.io/badge/SQL_Injection-Prevented-blue?style=for-the-badge&logo=mariadb&logoColor=white" alt="SQLi Prevention" />
   <img src="https://img.shields.io/badge/XSS-Sanitized-orange?style=for-the-badge&logo=codeforces&logoColor=white" alt="XSS Defense" />
