@@ -94,6 +94,17 @@ The **East West University Cafeteria Management System** is a full-stack web app
 
 ---
 
+
+## 🛡️ Security & Data Protection Mechanisms
+
+This project implements industry-standard Web Application Security practices to ensure data integrity, user privacy, and protection against common OWASP vulnerabilities:
+
+* **CSRF Protection (Cross-Site Request Forgery):** All critical forms, login endpoints, and state-changing requests use unique `csrf_token` validation to prevent unauthorized actions.
+* **SQL Injection Prevention:** Implemented **Prepared Statements** and parameterized queries across all database operations to ensure complete protection against SQL injection attacks.
+* **XSS Attack Defense (Cross-Site Scripting):** Dynamic user inputs and HTML output renderings are sanitized using `htmlspecialchars()` to prevent malicious script injection.
+* **Bot & Automated Attack Mitigation:** Built a custom **Dynamic Session CAPTCHA System** (`$_SESSION['captcha_student']`) with interactive refresh capabilities on authentication forms.
+* **Secure Authentication & Password Hashing:** User passwords are securely hashed using PHP’s `password_hash()` (Bcrypt/Argon2 algorithm) before database storage, ensuring zero plain-text password exposures.
+* **Session Management & Access Control:** Strict role-based session verification ensures users can only access endpoints authorized for their specific role (Student, Faculty, Staff, Admin).
 ## 🛠️ Tech Stack & Database Architecture
 
 * **Frontend:** HTML5, CSS3, Tailwind CSS, JavaScript (Custom Responsive UI, Glassmorphism Design, DOM Manipulation)
