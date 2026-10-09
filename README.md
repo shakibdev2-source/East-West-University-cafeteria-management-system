@@ -9,14 +9,6 @@
 
   <!-- Badges -->
 
-<p>
-    <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP" />
-    <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
-    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    <img src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
-    <img src="https://img.shields.io/badge/AI_Powered-Bot-FF6F61?style=for-the-badge&logo=openai&logoColor=white" alt="AI Powered" />
-  </p>
-
   <p>
     <img src="https://img.shields.io/badge/Access_Control-Role_Based-blue?style=flat-square&logo=keycloak&logoColor=white" alt="Role-Based Access Control" />
     <img src="https://img.shields.io/badge/OWASP-Top_10_Compliant-orange?style=flat-square&logo=owasp&logoColor=white" alt="OWASP Compliant" />
