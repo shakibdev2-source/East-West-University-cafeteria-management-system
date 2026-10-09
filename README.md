@@ -10,7 +10,6 @@
   <!-- Badges -->
 
   <p>
-    <img src="https://img.shields.io/badge/Access_Control-Role_Based-blue?style=flat-square&logo=keycloak&logoColor=white" alt="Role-Based Access Control" />
     <img src="https://img.shields.io/badge/OWASP-Top_10_Compliant-orange?style=flat-square&logo=owasp&logoColor=white" alt="OWASP Compliant" />
     <img src="https://img.shields.io/badge/CSRF_Protected-Shield-green?style=flat-square&logo=shield&logoColor=white" alt="CSRF Protection" />
     <img src="https://img.shields.io/badge/SQL_Injection-Prevented-blue?style=flat-square&logo=mariadb&logoColor=white" alt="SQLi Prevention" />
