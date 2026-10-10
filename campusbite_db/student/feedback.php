@@ -9,7 +9,6 @@ if (!$conn) {
 
 $user_id = $_SESSION['user_id'] ?? $_SESSION['student_id'] ?? 3;
 
-// AJAX Handle for Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     header('Content-Type: application/json');
     $subject = mysqli_real_escape_string($conn, trim($_POST['subject'] ?? ''));$message = mysqli_real_escape_string($conn, trim($_POST['message'] ?? ''));
@@ -22,16 +21,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
 
     $insert_sql = "INSERT INTO feedback (user_id, subject, message, rating) VALUES ('$user_id', '$subject', '$message', '$rating')";
     
-    if (mysqli_query($conn, $insert_sql)) {$new_id = mysqli_insert_id($conn);$date_formatted = date('M d, Y - h:i A');
-        
-        // Return HTML fragment for instant DOM injection
-        $stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
+    if (mysqli_query($conn,$insert_sql)) {
+        $date_formatted = date('M d, Y - h:i A');$stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
         $sub_text = htmlspecialchars($subject ?: 'General Feedback');
         $msg_text = htmlspecialchars($message);
 
+        // AI Sentiment Simulation based on rating
+        $sentiment_class =$rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');$sentiment_text = $rating >= 4 ? 'Positive Experience' : ($rating == 3 ? 'Average' : 'Needs Attention');
+
         $html_item = "
         <div class='feedback-item' data-rating='{$rating}' style='animation: fadeIn 0.4s ease;'>
-            <div class='stars'>{$stars_html}</div>
+            <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;'>
+                <div class='stars'>{$stars_html}</div>
+                <span class='sentiment-badge {$sentiment_class}'>{$sentiment_text}</span>
+            </div>
             <div style='font-weight: 700; font-size: 14px; color: #0f172a;'>{$sub_text}</div>
             <div style='font-size: 13px; color: #475569; margin-top: 4px; line-height: 1.5;'>{$msg_text}</div>
             <div style='font-size: 11px; color: #94a3b8; margin-top: 8px; display: flex; align-items: center; gap: 4px;'>
@@ -39,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             </div>
         </div>";
 
-        echo json_encode(['status' => 'success', 'html' => $html_item, 'message' => 'Thank you! Feedback submitted successfully.']);
+        echo json_encode(['status' => 'success', 'html' => $html_item, 'message' => 'Feedback submitted successfully!']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Database Error: ' . mysqli_error($conn)]);
     }
@@ -48,6 +51,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
 
 $feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY 1 DESC";
 $feedback_result = mysqli_query($conn,$feedback_query);
+
+// Analytics Metrics
+$total_feedbacks = 0;
+$total_rating_sum = 0;
+$rating_counts = [1=>0, 2=>0, 3=>0, 4=>0, 5=>0];
+
+$all_feedbacks_array = [];
+if ($feedback_result) {
+    while ($row = mysqli_fetch_assoc($feedback_result)) {
+        $all_feedbacks_array[] =$row;
+        $total_feedbacks++;
+        $total_rating_sum += (int)$row['rating'];
+        if(isset($rating_counts[(int)$row['rating']])) {
+            $rating_counts[(int)$row['rating']]++;
+        }
+    }
+}
+$avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_feedbacks, 1) : '0.0';
 ?>
 
 <!DOCTYPE html>
@@ -55,7 +76,7 @@ $feedback_result = mysqli_query($conn,$feedback_query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Feedback | CampusBite</title>
+    <title>World-Class Feedback | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -70,9 +91,16 @@ $feedback_result = mysqli_query($conn,$feedback_query);
         .nav-item.active a, .nav-item a:hover { background: #eef2ff; color: #4f46e5; font-weight: 700; }
 
         .main-content { flex: 1; margin-left: 260px; padding: 35px 45px; overflow-y: auto; max-width: 1400px; }
-        .page-title { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; }
-        .page-title-left { display: flex; align-items: center; gap: 12px; }
+        .page-title { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
         .page-title i { color: #4f46e5; background: #eef2ff; padding: 10px; border-radius: 12px; font-size: 20px; }
+
+        /* Analytics Overview Strip */
+        .analytics-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
+        .analytic-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px 22px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .analytic-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .analytic-icon.blue { background: #eef2ff; color: #4f46e5; }
+        .analytic-icon.amber { background: #fef3c7; color: #d97706; }
+        .analytic-icon.green { background: #dcfce7; color: #16a34a; }
 
         /* Toast Container */
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
@@ -104,17 +132,28 @@ $feedback_result = mysqli_query($conn,$feedback_query);
         .btn-submit { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #ffffff; border: none; padding: 14px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); transition: all 0.3s; }
         .btn-submit:hover { background: linear-gradient(135deg, #4338ca, #4f46e5); transform: translateY(-2px); }
 
-        /* Filter bar */
-        .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+        /* Search and Filter */
+        .search-filter-box { display: flex; gap: 10px; margin-bottom: 16px; }
+        .search-input { flex: 1; padding: 9px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; outline: none; }
+        .search-input:focus { border-color: #4f46e5; background: #fff; }
+
+        .filter-bar { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
         .filter-btn { background: #f1f5f9; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; color: #64748b; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .filter-btn.active, .filter-btn:hover { background: #4f46e5; color: #fff; }
 
-        .feedback-scroll { max-height: 460px; overflow-y: auto; padding-right: 4px; }
+        .feedback-scroll { max-height: 420px; overflow-y: auto; padding-right: 4px; }
         .feedback-scroll::-webkit-scrollbar { width: 5px; }
         .feedback-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
         .feedback-item { background: #f8fafc; border: 1px solid #f1f5f9; padding: 16px; border-radius: 14px; margin-bottom: 14px; transition: transform 0.2s; }
-        .stars { color: #f59e0b; font-size: 12px; margin-bottom: 6px; }
+        .stars { color: #f59e0b; font-size: 12px; }
+
+        /* Sentiment Badges */
+        .sentiment-badge { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sentiment-positive { background: #dcfce7; color: #15803d; }
+        .sentiment-neutral { background: #fef3c7; color: #b45309; }
+        .sentiment-negative { background: #fee2e2; color: #b91c1c; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -138,14 +177,41 @@ $feedback_result = mysqli_query($conn,$feedback_query);
             </ul>
         </div>
         <div style="font-size: 12px; color: #94a3b8; text-align: center; padding-top: 20px; border-top: 1px solid #f1f5f9;">
-            CampusBite v3.0 Advanced
+            CampusBite Enterprise v4.0
         </div>
     </div>
 
     <div class="main-content">
         <div class="page-title">
-            <div class="page-title-left">
+            <div style="display: flex; align-items: center; gap: 12px;">
                 <i class="fa-solid fa-comment-dots"></i> Send Us Feedback
+            </div>
+        </div>
+
+        <!-- Analytics Overview Strip -->
+        <div class="analytics-strip">
+            <div class="analytic-card">
+                <div class="analytic-icon blue"><i class="fa-solid fa-comments"></i></div>
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">Total Feedbacks</div>
+                    <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statTotal"><?= $total_feedbacks; ?></div>
+                </div>
+            </div>
+            <div class="analytic-card">
+                <div class="analytic-icon amber"><i class="fa-solid fa-star"></i></div>
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">Average Rating</div>
+                    <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statAvg"><?= $avg_rating; ?> / 5.0</div>
+                </div>
+            </div>
+            <div class="analytic-card">
+                <div class="analytic-icon green"><i class="fa-solid fa-shield-heart"></i></div>
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">Satisfaction Rate</div>
+                    <div style="font-size: 20px; font-weight: 800; color: #0f172a;" id="statSat">
+                        <?= $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_counts[4]) /$total_feedbacks) * 100) : 0; ?>%
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -184,11 +250,16 @@ $feedback_result = mysqli_query($conn,$feedback_query);
                 </form>
             </div>
 
-            <!-- List & Filter Card -->
+            <!-- List, Search & Filter Card -->
             <div class="card">
-                <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 16px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 14px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-clock-rotate-left" style="color: #4f46e5;"></i> My Previous Feedback
                 </h3>
+
+                <!-- Search Input Bar -->
+                <div class="search-filter-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search feedbacks...">
+                </div>
 
                 <!-- Filter Bar -->
                 <div class="filter-bar">
@@ -200,12 +271,19 @@ $feedback_result = mysqli_query($conn,$feedback_query);
                 </div>
 
                 <div class="feedback-scroll" id="feedbackContainer">
-                    <?php if ($feedback_result && mysqli_num_rows($feedback_result) > 0): ?>
-                        <?php while ($fb = mysqli_fetch_assoc($feedback_result)): ?>
-                            <div class="feedback-item" data-rating="<?= $fb['rating']; ?>">
-                                <div class="stars">
-                                    <?= str_repeat('<i class="fa-solid fa-star"></i>', $fb['rating']); ?>
-                                    <?= str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $fb['rating']); ?>
+                    <?php if (!empty($all_feedbacks_array)): ?>
+                        <?php foreach ($all_feedbacks_array as$fb): ?>
+                            <?php 
+                                $r = (int)$fb['rating'];
+                                $s_class =$r >= 4 ? 'sentiment-positive' : ($r == 3 ? 'sentiment-neutral' : 'sentiment-negative');$s_text = $r >= 4 ? 'Positive Experience' : ($r == 3 ? 'Average' : 'Needs Attention');
+                            ?>
+                            <div class="feedback-item" data-rating="<?= $r; ?>" data-text="<?= strtolower(htmlspecialchars($fb['subject'] . ' ' .$fb['message'])); ?>">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <div class="stars">
+                                        <?= str_repeat('<i class="fa-solid fa-star"></i>', $r); ?>
+                                        <?= str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $r); ?>
+                                    </div>
+                                    <span class="sentiment-badge <?= $s_class; ?>"><?= $s_text; ?></span>
                                 </div>
                                 <div style="font-weight: 700; font-size: 14px; color: #0f172a;">
                                     <?= htmlspecialchars($fb['subject'] ?: 'General Feedback'); ?>
@@ -217,7 +295,7 @@ $feedback_result = mysqli_query($conn,$feedback_query);
                                     <i class="fa-regular fa-calendar"></i> <?= date('M d, Y - h:i A', strtotime($fb['created_at'])); ?>
                                 </div>
                             </div>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     <?php else: ?>
                         <div id="noFeedbackText" style="text-align: center; padding: 40px 0; color: #94a3b8;">
                             <i class="fa-regular fa-comments" style="font-size: 36px; margin-bottom: 10px; color: #cbd5e1;"></i>
@@ -230,7 +308,6 @@ $feedback_result = mysqli_query($conn,$feedback_query);
     </div>
 
     <script>
-        // Toast Function
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -240,14 +317,12 @@ $feedback_result = mysqli_query($conn,$feedback_query);
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Character Counter
         const messageInput = document.getElementById('message');
         const charCount = document.getElementById('charCount');
         messageInput.addEventListener('input', () => {
             charCount.innerText = messageInput.value.length;
         });
 
-        // AJAX Form Submit
         const feedbackForm = document.getElementById('feedbackForm');
         feedbackForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -277,6 +352,9 @@ $feedback_result = mysqli_query($conn,$feedback_query);
                     if (noText) noText.remove();
 
                     container.insertAdjacentHTML('afterbegin', data.html);
+                    
+                    // Reload or dynamically update metrics could be handled here
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showToast(data.message, 'error');
                 }
@@ -288,24 +366,38 @@ $feedback_result = mysqli_query($conn,$feedback_query);
             });
         });
 
-        // Filter Feedback System
+        // Search and Filter Combination
+        const searchInput = document.getElementById('searchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
+        let currentFilter = 'all';
+
+        function applyFilterAndSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            const items = document.querySelectorAll('.feedback-item');
+
+            items.forEach(item => {
+                const rating = item.getAttribute('data-rating');
+                const text = item.getAttribute('data-text');
+
+                const matchesFilter = (currentFilter === 'all' || currentFilter.includes(rating));
+                const matchesSearch = text.includes(query);
+
+                if (matchesFilter && matchesSearch) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', applyFilterAndSearch);
+
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 filterBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-
-                const filterVal = btn.getAttribute('data-filter');
-                const items = document.querySelectorAll('.feedback-item');
-
-                items.forEach(item => {
-                    const rating = item.getAttribute('data-rating');
-                    if (filterVal === 'all' || filterVal.includes(rating)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
+                currentFilter = btn.getAttribute('data-filter');
+                applyFilterAndSearch();
             });
         });
     </script>
