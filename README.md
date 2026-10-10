@@ -9,11 +9,6 @@
 
   <!-- Badges -->
 
- 
-
-
-
-  
   <p>
 <p>
   <img src="https://img.shields.io/badge/Access_Control-Role_Based-blue?style=for-the-badge&logo=keycloak&logoColor=white" alt="Role-Based Access Control" />
@@ -39,10 +34,12 @@
 
 ## 📌 Overview
 
-
+## STUDENT PORTAL LOGIN INTERFACE 
 
 https://github.com/user-attachments/assets/ccc61787-76ba-4caa-826d-5c9d16dcdbc2
 
+
+## AI Auto-Order Assistant
 
 
 
