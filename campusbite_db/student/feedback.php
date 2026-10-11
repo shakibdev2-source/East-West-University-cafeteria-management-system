@@ -9,6 +9,19 @@ if (!$conn) {
 
 $user_id = $_SESSION['user_id'] ?? $_SESSION['student_id'] ?? 3;
 
+// Handle Delete Request via AJAX
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    header('Content-Type: application/json');
+    $del_id = intval($_POST['delete_id']);$del_sql = "DELETE FROM feedback WHERE id = '$del_id' AND user_id = '$user_id'";
+    if (mysqli_query($conn,$del_sql)) {
+        echo json_encode(['status' => 'success', 'message' => 'Feedback deleted successfully!']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Failed to delete feedback.']);
+    }
+    exit;
+}
+
+// Handle Insert Request via AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     header('Content-Type: application/json');
     $subject = mysqli_real_escape_string($conn, trim($_POST['subject'] ?? ''));$message = mysqli_real_escape_string($conn, trim($_POST['message'] ?? ''));
@@ -22,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     $insert_sql = "INSERT INTO feedback (user_id, subject, message, rating) VALUES ('$user_id', '$subject', '$message', '$rating')";
     
     if (mysqli_query($conn,$insert_sql)) {
+        $new_id = mysqli_insert_id($conn);
         $date_formatted = date('M d, Y - h:i A');$stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
         $sub_text = htmlspecialchars($subject ?: 'General Feedback');
         $msg_text = htmlspecialchars($message);
@@ -29,15 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
         $sentiment_class =$rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');$sentiment_text = $rating >= 4 ? 'Positive' : ($rating == 3 ? 'Average' : 'Attention');
 
         $html_item = "
-        <div class='feedback-item' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' .$msg_text) . "' style='animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;'>
+        <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' .$msg_text) . "'>
             <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;'>
                 <div class='stars'>{$stars_html}</div>
-                <span class='sentiment-badge {$sentiment_class}'>{$sentiment_text}</span>
+                <div style='display: flex; align-items: center; gap: 8px;'>
+                    <span class='sentiment-badge {$sentiment_class}'>{$sentiment_text}</span>
+                    <button onclick='deleteFeedback({$new_id})' title='Delete Feedback' style='background:none; border:none; color:#94a3b8; cursor:pointer; font-size:13px; transition:0.2s;' onmouseover='this.style.color=\"#ef4444\"' onmouseout='this.style.color=\"#94a3b8\"'>
+                        <i class='fa-solid fa-trash-can'></i>
+                    </button>
+                </div>
             </div>
             <div style='font-weight: 700; font-size: 14.5px; color: #0f172a;'>{$sub_text}</div>
             <div style='font-size: 13.5px; color: #475569; margin-top: 6px; line-height: 1.6;'>{$msg_text}</div>
-            <div style='font-size: 11.5px; color: #94a3b8; margin-top: 10px; display: flex; align-items: center; gap: 6px;'>
-                <i class='fa-regular fa-clock'></i> {$date_formatted}
+            <div style='font-size: 11.5px; color: #94a3b8; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;'>
+                <span style='display: flex; align-items: center; gap: 6px;'><i class='fa-regular fa-clock'></i> {$date_formatted}</span>
+                <span style='font-size: 11px; font-weight:700; color:#4f46e5; background:#eef2ff; padding:2px 8px; border-radius:6px;'>Just Now</span>
             </div>
         </div>";
 
@@ -48,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     exit;
 }
 
-$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY 1 DESC";
+$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY id DESC";
 $feedback_result = mysqli_query($conn,$feedback_query);
 
 $total_feedbacks = 0;
@@ -66,7 +86,7 @@ if ($feedback_result) {
         }
     }
 }
-$avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_feedbacks, 1) : '0.0';
+$avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_feedbacks, 1) : '0.0';$satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_counts[4]) /$total_feedbacks) * 100) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +94,7 @@ $avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_fee
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Feedback | CampusBite</title>
+    <title>Enterprise Feedback Pro | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -145,7 +165,7 @@ $avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_fee
         .feedback-scroll::-webkit-scrollbar { width: 6px; }
         .feedback-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        .feedback-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px; border-radius: 16px; margin-bottom: 14px; transition: all 0.3s ease; }
+        .feedback-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px; border-radius: 16px; margin-bottom: 14px; transition: all 0.3s ease; animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .feedback-item:hover { border-color: #cbd5e1; box-shadow: 0 6px 20px rgba(0,0,0,0.03); transform: translateY(-2px); }
         .stars { color: #f59e0b; font-size: 13px; }
 
@@ -177,13 +197,13 @@ $avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_fee
             </ul>
         </div>
         <div style="font-size: 12px; color: #94a3b8; text-align: center; padding-top: 20px; border-top: 1px solid #f1f5f9;">
-            CampusBite UI Pro v5.0
+            CampusBite UI Pro v5.1 Advanced
         </div>
     </div>
 
     <div class="main-content">
         <div class="page-title">
-            <i class="fa-solid fa-comment-dots"></i> Send Us Feedback
+            <i class="fa-solid fa-comment-dots"></i> Enterprise Feedback Portal
         </div>
 
         <!-- Analytics Overview Strip -->
@@ -207,7 +227,7 @@ $avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_fee
                 <div>
                     <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Satisfaction Rate</div>
                     <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 2px;" id="statSat">
-                        <?= $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_counts[4]) /$total_feedbacks) * 100) : 0; ?>%
+                        <span id="statSatVal"><?= $satisfaction_rate; ?></span>%
                     </div>
                 </div>
             </div>
@@ -275,13 +295,18 @@ $avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_fee
                                 $r = (int)$fb['rating'];
                                 $s_class =$r >= 4 ? 'sentiment-positive' : ($r == 3 ? 'sentiment-neutral' : 'sentiment-negative');$s_text = $r >= 4 ? 'Positive' : ($r == 3 ? 'Average' : 'Attention');
                             ?>
-                            <div class="feedback-item" data-rating="<?= $r; ?>" data-text="<?= strtolower(htmlspecialchars($fb['subject'] . ' ' .$fb['message'])); ?>">
+                            <div class="feedback-item" id="feedback-item-<?= $fb['id']; ?>" data-id="<?= $fb['id']; ?>" data-rating="<?= $r; ?>" data-text="<?= strtolower(htmlspecialchars($fb['subject'] . ' ' .$fb['message'])); ?>">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <div class="stars">
                                         <?= str_repeat('<i class="fa-solid fa-star"></i>', $r); ?>
                                         <?= str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $r); ?>
                                     </div>
-                                    <span class="sentiment-badge <?= $s_class; ?>"><?= $s_text; ?></span>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="sentiment-badge <?= $s_class; ?>"><?= $s_text; ?></span>
+                                        <button onclick="deleteFeedback(<?= $fb['id']; ?>)" title="Delete Feedback" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:13px; transition:0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div style="font-weight: 700; font-size: 14.5px; color: #0f172a;">
                                     <?= htmlspecialchars($fb['subject'] ?: 'General Feedback'); ?>
@@ -350,7 +375,13 @@ $avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_fee
                     if (noText) noText.remove();
 
                     container.insertAdjacentHTML('afterbegin', data.html);
-                    setTimeout(() => location.reload(), 1000);
+                    
+                    // Live update counters smoothly
+                    let statTotal = document.getElementById('statTotal');
+                    statTotal.innerText = parseInt(statTotal.innerText) + 1;
+                    
+                    // Optional gentle refresh to fully sync analytics metrics
+                    setTimeout(() => location.reload(), 1200);
                 } else {
                     showToast(data.message, 'error');
                 }
@@ -361,6 +392,51 @@ $avg_rating =$total_feedbacks > 0 ? number_format($total_rating_sum / $total_fee
                 showToast('Something went wrong!', 'error');
             });
         });
+
+        // Delete Feedback function via AJAX
+        function deleteFeedback(id) {
+            if (!confirm('Are you sure you want to delete this feedback?')) return;
+
+            const formData = new FormData();
+            formData.append('delete_id', id);
+
+            fetch('feedback.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast(data.message, 'success');
+                    const item = document.getElementById(`feedback-item-${id}`);
+                    if (item) {
+                        item.style.transform = 'scale(0.9)';
+                        item.style.opacity = '0';
+                        setTimeout(() => {
+                            item.remove();
+                            let statTotal = document.getElementById('statTotal');
+                            let currentTotal = parseInt(statTotal.innerText) - 1;
+                            statTotal.innerText = currentTotal >= 0 ? currentTotal : 0;
+                            
+                            // Show placeholder if list is empty
+                            const container = document.getElementById('feedbackContainer');
+                            if (container.querySelectorAll('.feedback-item').length === 0) {
+                                container.innerHTML = `
+                                    <div id="noFeedbackText" style="text-align: center; padding: 50px 0; color: #94a3b8;">
+                                        <i class="fa-regular fa-comments" style="font-size: 40px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                                        <p style="font-size: 14px; font-weight: 700;">You haven't submitted any feedback yet.</p>
+                                    </div>`;
+                            }
+                        }, 300);
+                    }
+                } else {
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(() => {
+                showToast('Failed to delete feedback!', 'error');
+            });
+        }
 
         const searchInput = document.getElementById('searchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
