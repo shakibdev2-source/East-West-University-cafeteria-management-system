@@ -11,7 +11,8 @@ $user_id = $_SESSION['user_id'] ?? $_SESSION['student_id'] ?? 3;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     header('Content-Type: application/json');
-    $del_id = intval($_POST['delete_id']);$del_sql = "DELETE FROM feedback WHERE id = '$del_id' AND user_id = '$user_id'";
+    $del_id = intval($_POST['delete_id']);
+    $del_sql = "DELETE FROM feedback WHERE id = '$del_id' AND user_id = '$user_id'";
     if (mysqli_query($conn,$del_sql)) {
         echo json_encode(['status' => 'success', 'message' => 'Feedback deleted successfully!']);
     } else {
@@ -46,20 +47,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
                 <div class='stars'>{$stars_html}</div>
                 <div style='display: flex; align-items: center; gap: 8px;'>
                     <span class='sentiment-badge {$sentiment_class}'>{$sentiment_text}</span>
-                    <button onclick='deleteFeedback({$new_id})' title='Delete Feedback' style='background:none; border:none; color:#94a3b8; cursor:pointer; font-size:13px; transition:0.2s;' onmouseover='this.style.color=\"#ef4444\"' onmouseout='this.style.color=\"#94a3b8\"'>
+                    <button onclick='deleteFeedback({$new_id})' title='Delete Feedback' style='background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:13px; transition:0.2s;' onmouseover='this.style.color=\"#ef4444\"' onmouseout='this.style.color=\"var(--text-sub)\"'>
                         <i class='fa-solid fa-trash-can'></i>
                     </button>
                 </div>
             </div>
-            <div style='font-weight: 700; font-size: 14.5px; color: #0f172a;'>{$sub_text}</div>
-            <div style='font-size: 13.5px; color: #475569; margin-top: 6px; line-height: 1.6;'>{$msg_text}</div>
-            <div style='font-size: 11.5px; color: #94a3b8; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;'>
+            <div style='font-weight: 700; font-size: 14.5px; color: var(--text-main);'>{$sub_text}</div>
+            <div style='font-size: 13.5px; color: var(--text-sub); margin-top: 6px; line-height: 1.6;'>{$msg_text}</div>
+            <div style='font-size: 11.5px; color: var(--text-sub); margin-top: 10px; display: flex; justify-content: space-between; align-items: center;'>
                 <span style='display: flex; align-items: center; gap: 6px;'><i class='fa-regular fa-clock'></i> {$date_formatted}</span>
-                <span style='font-size: 11px; font-weight:700; color:#4f46e5; background:#eef2ff; padding:2px 8px; border-radius:6px;'>Just Now</span>
+                <span style='font-size: 11px; font-weight:700; color:var(--primary); background:var(--primary-light); padding:2px 8px; border-radius:6px;'>Just Now</span>
             </div>
         </div>";
 
-        echo json_encode(['status' => 'success', 'html' => $html_item, 'message' => 'Feedback submitted successfully!']);
+        echo json_encode(['status' => 'success', 'html' => $html_item, 'new_id' => $new_id, 'rating' =>$rating, 'message' => 'Feedback submitted successfully!']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Database Error: ' . mysqli_error($conn)]);
     }
@@ -88,33 +89,59 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Feedback Pro | CampusBite</title>
+    <title>Ultimate Enterprise Feedback | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { display: flex; background-color: #f6f8fb; color: #1e293b; min-height: 100vh; overflow-x: hidden; }
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --bg-main: #f6f8fb;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
+        }
 
-        .sidebar { width: 260px; background: #ffffff; padding: 24px 20px; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; }
-        .brand { font-size: 20px; font-weight: 800; color: #4f46e5; display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
-        .brand-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25); }
+        [data-theme="dark"] {
+            --bg-main: #0b1120;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border: #334155;
+            --primary-light: rgba(79, 70, 229, 0.15);
+            --shadow: 0 10px 30px -5px rgba(0,0,0,0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        body { display: flex; background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+        .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; }
+        .brand { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+        .brand-icon { background: linear-gradient(135deg, var(--primary), #6366f1); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25); }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-        .nav-item a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: #64748b; font-size: 14px; font-weight: 600; border-radius: 12px; transition: 0.2s; }
-        .nav-item.active a, .nav-item a:hover { background: #eef2ff; color: #4f46e5; font-weight: 700; }
+        .nav-item a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: var(--text-sub); font-size: 14px; font-weight: 600; border-radius: 12px; }
+        .nav-item.active a, .nav-item a:hover { background: var(--primary-light); color: var(--primary); font-weight: 700; }
 
         .main-content { flex: 1; margin-left: 260px; padding: 40px 50px; overflow-y: auto; max-width: 1440px; }
-        .page-title { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 24px; display: flex; align-items: center; gap: 14px; letter-spacing: -0.5px; }
-        .page-title i { color: #4f46e5; background: #eef2ff; padding: 12px; border-radius: 14px; font-size: 20px; box-shadow: 0 4px 12px rgba(79,70,229,0.1); }
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .page-title { font-size: 28px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 14px; letter-spacing: -0.5px; }
+        .page-title i { color: var(--primary); background: var(--primary-light); padding: 12px; border-radius: 14px; font-size: 20px; }
+
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .action-icon-btn { background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 16px; box-shadow: var(--shadow); }
 
         .analytics-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
-        .analytic-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px 24px; display: flex; align-items: center; gap: 18px; box-shadow: 0 4px 20px -4px rgba(0,0,0,0.03); transition: transform 0.3s ease; }
-        .analytic-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.06); }
+        .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px 24px; display: flex; align-items: center; gap: 18px; box-shadow: var(--shadow); transition: transform 0.3s ease; }
+        .analytic-card:hover { transform: translateY(-3px); }
         .analytic-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .analytic-icon.blue { background: #eef2ff; color: #4f46e5; }
+        .analytic-icon.blue { background: var(--primary-light); color: var(--primary); }
         .analytic-icon.amber { background: #fef3c7; color: #d97706; }
         .analytic-icon.green { background: #dcfce7; color: #16a34a; }
 
@@ -126,41 +153,41 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         @keyframes fadeOut { to { opacity: 0; transform: translateY(12px); } }
 
         .feedback-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; align-items: start; }
-        .card { background: #ffffff; border-radius: 24px; border: 1px solid #e2e8f0; padding: 32px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.04); }
+        .card { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border); padding: 32px; box-shadow: var(--shadow); }
         
         .form-group { margin-bottom: 22px; position: relative; }
-        .form-label { display: block; font-size: 12px; font-weight: 800; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
-        .form-control { width: 100%; padding: 14px 18px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 14px; outline: none; transition: all 0.3s ease; color: #1e293b; }
-        .form-control:focus { border-color: #4f46e5; background: #ffffff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12); }
+        .form-label { display: block; font-size: 12px; font-weight: 800; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .form-control { width: 100%; padding: 14px 18px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 14px; font-size: 14px; outline: none; transition: all 0.3s ease; color: var(--text-main); }
+        .form-control:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12); }
         textarea.form-control { resize: vertical; min-height: 130px; }
 
-        .char-count { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: #94a3b8; font-weight: 700; }
+        .char-count { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: var(--text-sub); font-weight: 700; }
 
         .star-rating { display: flex; gap: 10px; font-size: 26px; cursor: pointer; flex-direction: row-reverse; justify-content: flex-end; }
         .star-rating input { display: none; }
-        .star-rating label { color: #cbd5e1; transition: color 0.2s ease, transform 0.2s ease; }
+        .star-rating label { color: var(--border); transition: color 0.2s ease, transform 0.2s ease; }
         .star-rating label:hover { transform: scale(1.15); }
         .star-rating input:checked ~ label,
         .star-rating label:hover,
         .star-rating label:hover ~ label { color: #f59e0b; }
 
-        .btn-submit { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #ffffff; border: none; padding: 16px 20px; border-radius: 14px; font-weight: 800; font-size: 14.5px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35); transition: all 0.3s ease; }
-        .btn-submit:hover { background: linear-gradient(135deg, #4338ca, #4f46e5); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45); }
+        .btn-submit { background: linear-gradient(135deg, var(--primary), #6366f1); color: #ffffff; border: none; padding: 16px 20px; border-radius: 14px; font-weight: 800; font-size: 14.5px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35); transition: all 0.3s ease; }
+        .btn-submit:hover { background: linear-gradient(135deg, var(--primary-hover), var(--primary)); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45); }
 
         .search-filter-box { display: flex; gap: 10px; margin-bottom: 16px; }
-        .search-input { flex: 1; padding: 11px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 13.5px; outline: none; transition: all 0.3s; }
-        .search-input:focus { border-color: #4f46e5; background: #fff; box-shadow: 0 0 0 4px rgba(79,70,229,0.1); }
+        .search-input { flex: 1; padding: 11px 16px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 12px; font-size: 13.5px; outline: none; color: var(--text-main); }
+        .search-input:focus { border-color: var(--primary); background: var(--card-bg); }
 
         .filter-bar { display: flex; gap: 6px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 4px; }
-        .filter-btn { background: #f1f5f9; border: none; padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; color: #64748b; cursor: pointer; transition: 0.2s; white-space: nowrap; }
-        .filter-btn.active, .filter-btn:hover { background: #4f46e5; color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.25); }
+        .filter-btn { background: var(--bg-main); border: none; padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.25); }
 
         .feedback-scroll { max-height: 440px; overflow-y: auto; padding-right: 6px; }
         .feedback-scroll::-webkit-scrollbar { width: 6px; }
-        .feedback-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .feedback-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        .feedback-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px; border-radius: 16px; margin-bottom: 14px; transition: all 0.3s ease; animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .feedback-item:hover { border-color: #cbd5e1; box-shadow: 0 6px 20px rgba(0,0,0,0.03); transform: translateY(-2px); }
+        .feedback-item { background: var(--bg-main); border: 1px solid var(--border); padding: 18px; border-radius: 16px; margin-bottom: 14px; transition: all 0.3s ease; animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .feedback-item:hover { border-color: var(--primary); box-shadow: var(--shadow); transform: translateY(-2px); }
         .stars { color: #f59e0b; font-size: 13px; }
 
         .sentiment-badge { font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.6px; }
@@ -190,36 +217,41 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 <li class="nav-item"><a href="orders.php"><i class="fa-solid fa-clock-rotate-left"></i> Orders</a></li>
             </ul>
         </div>
-        <div style="font-size: 12px; color: #94a3b8; text-align: center; padding-top: 20px; border-top: 1px solid #f1f5f9;">
-            CampusBite UI Pro v5.1 Advanced
+        <div style="font-size: 12px; color: var(--text-sub); text-align: center; padding-top: 20px; border-top: 1px solid var(--border);">
+            CampusBite v6.0 Ultimate
         </div>
     </div>
 
     <div class="main-content">
-        <div class="page-title">
-            <i class="fa-solid fa-comment-dots"></i> Enterprise Feedback Portal
+        <div class="top-header">
+            <div class="page-title">
+                <i class="fa-solid fa-comment-dots"></i> Ultimate Feedback Portal
+            </div>
+            <div class="header-actions">
+                <button class="action-icon-btn" id="themeToggle" title="Toggle Dark/Light Mode"><i class="fa-solid fa-moon"></i></button>
+            </div>
         </div>
 
         <div class="analytics-strip">
             <div class="analytic-card">
                 <div class="analytic-icon blue"><i class="fa-solid fa-comments"></i></div>
                 <div>
-                    <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Total Feedbacks</div>
-                    <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 2px;" id="statTotal"><?= $total_feedbacks; ?></div>
+                    <div style="font-size: 11.5px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Total Feedbacks</div>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 2px;" id="statTotal"><?= $total_feedbacks; ?></div>
                 </div>
             </div>
             <div class="analytic-card">
                 <div class="analytic-icon amber"><i class="fa-solid fa-star"></i></div>
                 <div>
-                    <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Average Rating</div>
-                    <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 2px;" id="statAvg"><?= $avg_rating; ?> / 5.0</div>
+                    <div style="font-size: 11.5px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Average Rating</div>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 2px;" id="statAvg"><?= $avg_rating; ?> / 5.0</div>
                 </div>
             </div>
             <div class="analytic-card">
                 <div class="analytic-icon green"><i class="fa-solid fa-shield-heart"></i></div>
                 <div>
-                    <div style="font-size: 11.5px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Satisfaction Rate</div>
-                    <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 2px;" id="statSat">
+                    <div style="font-size: 11.5px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Satisfaction Rate</div>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 2px;" id="statSat">
                         <span id="statSatVal"><?= $satisfaction_rate; ?></span>%
                     </div>
                 </div>
@@ -228,8 +260,8 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 
         <div class="feedback-grid">
             <div class="card">
-                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 22px; color: #0f172a; display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-pen-to-square" style="color: #4f46e5;"></i> Share Your Experience
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 22px; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> Share Your Experience
                 </h3>
                 <form id="feedbackForm">
                     <div class="form-group">
@@ -261,8 +293,8 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             </div>
 
             <div class="card">
-                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: #0f172a; display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-clock-rotate-left" style="color: #4f46e5;"></i> My Previous Feedback
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> My Previous Feedback
                 </h3>
 
                 <div class="search-filter-box">
@@ -292,25 +324,25 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <span class="sentiment-badge <?= $s_class; ?>"><?= $s_text; ?></span>
-                                        <button onclick="deleteFeedback(<?= $fb['id']; ?>)" title="Delete Feedback" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:13px; transition:0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'">
+                                        <button onclick="deleteFeedback(<?= $fb['id']; ?>)" title="Delete Feedback" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:13px; transition:0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--text-sub)'">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </button>
                                     </div>
                                 </div>
-                                <div style="font-weight: 700; font-size: 14.5px; color: #0f172a;">
+                                <div style="font-weight: 700; font-size: 14.5px; color: var(--text-main);">
                                     <?= htmlspecialchars($fb['subject'] ?: 'General Feedback'); ?>
                                 </div>
-                                <div style="font-size: 13.5px; color: #475569; margin-top: 6px; line-height: 1.6;">
+                                <div style="font-size: 13.5px; color: var(--text-sub); margin-top: 6px; line-height: 1.6;">
                                     <?= htmlspecialchars($fb['message']); ?>
                                 </div>
-                                <div style="font-size: 11.5px; color: #94a3b8; margin-top: 10px; display: flex; align-items: center; gap: 6px;">
+                                <div style="font-size: 11.5px; color: var(--text-sub); margin-top: 10px; display: flex; align-items: center; gap: 6px;">
                                     <i class="fa-regular fa-clock"></i> <?= date('M d, Y - h:i A', strtotime($fb['created_at'])); ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <div id="noFeedbackText" style="text-align: center; padding: 50px 0; color: #94a3b8;">
-                            <i class="fa-regular fa-comments" style="font-size: 40px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                        <div id="noFeedbackText" style="text-align: center; padding: 50px 0; color: var(--text-sub);">
+                            <i class="fa-regular fa-comments" style="font-size: 40px; margin-bottom: 12px; color: var(--border);"></i>
                             <p style="font-size: 14px; font-weight: 700;">You haven't submitted any feedback yet.</p>
                         </div>
                     <?php endif; ?>
@@ -320,6 +352,14 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
     </div>
 
     <script>
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            themeToggle.innerHTML = targetTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        });
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -368,12 +408,12 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                     let statTotal = document.getElementById('statTotal');
                     statTotal.innerText = parseInt(statTotal.innerText) + 1;
                     
-                    setTimeout(() => location.reload(), 1200);
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showToast(data.message, 'error');
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `Submit Feedback <i class="fa-solid fa-paper-plane"></i>`;
                 showToast('Something went wrong!', 'error');
@@ -407,8 +447,8 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                             const container = document.getElementById('feedbackContainer');
                             if (container.querySelectorAll('.feedback-item').length === 0) {
                                 container.innerHTML = `
-                                    <div id="noFeedbackText" style="text-align: center; padding: 50px 0; color: #94a3b8;">
-                                        <i class="fa-regular fa-comments" style="font-size: 40px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                                    <div id="noFeedbackText" style="text-align: center; padding: 50px 0; color: var(--text-sub);">
+                                        <i class="fa-regular fa-comments" style="font-size: 40px; margin-bottom: 12px; color: var(--border);"></i>
                                         <p style="font-size: 14px; font-weight: 700;">You haven't submitted any feedback yet.</p>
                                     </div>`;
                             }
