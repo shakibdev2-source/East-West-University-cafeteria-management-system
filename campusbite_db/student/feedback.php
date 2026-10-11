@@ -9,7 +9,6 @@ if (!$conn) {
 
 $user_id = $_SESSION['user_id'] ?? $_SESSION['student_id'] ?? 3;
 
-// Handle Delete Request via AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     header('Content-Type: application/json');
     $del_id = intval($_POST['delete_id']);$del_sql = "DELETE FROM feedback WHERE id = '$del_id' AND user_id = '$user_id'";
@@ -21,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     exit;
 }
 
-// Handle Insert Request via AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     header('Content-Type: application/json');
     $subject = mysqli_real_escape_string($conn, trim($_POST['subject'] ?? ''));$message = mysqli_real_escape_string($conn, trim($_POST['message'] ?? ''));
@@ -112,7 +110,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .page-title { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 24px; display: flex; align-items: center; gap: 14px; letter-spacing: -0.5px; }
         .page-title i { color: #4f46e5; background: #eef2ff; padding: 12px; border-radius: 14px; font-size: 20px; box-shadow: 0 4px 12px rgba(79,70,229,0.1); }
 
-        /* Analytics Strip */
         .analytics-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
         .analytic-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px 24px; display: flex; align-items: center; gap: 18px; box-shadow: 0 4px 20px -4px rgba(0,0,0,0.03); transition: transform 0.3s ease; }
         .analytic-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.06); }
@@ -121,7 +118,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .analytic-icon.amber { background: #fef3c7; color: #d97706; }
         .analytic-icon.green { background: #dcfce7; color: #16a34a; }
 
-        /* Toast */
         .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { padding: 14px 22px; border-radius: 14px; font-size: 13.5px; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; }
         .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
@@ -140,7 +136,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 
         .char-count { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: #94a3b8; font-weight: 700; }
 
-        /* Star Rating */
         .star-rating { display: flex; gap: 10px; font-size: 26px; cursor: pointer; flex-direction: row-reverse; justify-content: flex-end; }
         .star-rating input { display: none; }
         .star-rating label { color: #cbd5e1; transition: color 0.2s ease, transform 0.2s ease; }
@@ -152,7 +147,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .btn-submit { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #ffffff; border: none; padding: 16px 20px; border-radius: 14px; font-weight: 800; font-size: 14.5px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35); transition: all 0.3s ease; }
         .btn-submit:hover { background: linear-gradient(135deg, #4338ca, #4f46e5); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45); }
 
-        /* Search & Filter */
         .search-filter-box { display: flex; gap: 10px; margin-bottom: 16px; }
         .search-input { flex: 1; padding: 11px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 13.5px; outline: none; transition: all 0.3s; }
         .search-input:focus { border-color: #4f46e5; background: #fff; box-shadow: 0 0 0 4px rgba(79,70,229,0.1); }
@@ -206,7 +200,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             <i class="fa-solid fa-comment-dots"></i> Enterprise Feedback Portal
         </div>
 
-        <!-- Analytics Overview Strip -->
         <div class="analytics-strip">
             <div class="analytic-card">
                 <div class="analytic-icon blue"><i class="fa-solid fa-comments"></i></div>
@@ -234,7 +227,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         </div>
 
         <div class="feedback-grid">
-            <!-- Form Card -->
             <div class="card">
                 <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 22px; color: #0f172a; display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-pen-to-square" style="color: #4f46e5;"></i> Share Your Experience
@@ -268,18 +260,15 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 </form>
             </div>
 
-            <!-- List, Search & Filter Card -->
             <div class="card">
                 <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: #0f172a; display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-clock-rotate-left" style="color: #4f46e5;"></i> My Previous Feedback
                 </h3>
 
-                <!-- Search Input Bar -->
                 <div class="search-filter-box">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search feedbacks...">
                 </div>
 
-                <!-- Filter Bar -->
                 <div class="filter-bar">
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="5">5 ⭐</button>
@@ -376,11 +365,9 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 
                     container.insertAdjacentHTML('afterbegin', data.html);
                     
-                    // Live update counters smoothly
                     let statTotal = document.getElementById('statTotal');
                     statTotal.innerText = parseInt(statTotal.innerText) + 1;
                     
-                    // Optional gentle refresh to fully sync analytics metrics
                     setTimeout(() => location.reload(), 1200);
                 } else {
                     showToast(data.message, 'error');
@@ -393,7 +380,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             });
         });
 
-        // Delete Feedback function via AJAX
         function deleteFeedback(id) {
             if (!confirm('Are you sure you want to delete this feedback?')) return;
 
@@ -418,7 +404,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                             let currentTotal = parseInt(statTotal.innerText) - 1;
                             statTotal.innerText = currentTotal >= 0 ? currentTotal : 0;
                             
-                            // Show placeholder if list is empty
                             const container = document.getElementById('feedbackContainer');
                             if (container.querySelectorAll('.feedback-item').length === 0) {
                                 container.innerHTML = `
