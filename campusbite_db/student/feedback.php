@@ -36,14 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     
     if (mysqli_query($conn, $insert_sql)) {
         $new_id = mysqli_insert_id($conn);
-        $date_formatted = date('M d, Y - h:i A');$stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
+        $date_formatted = date('M d, Y - h:i A');
+        $stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
         $sub_text = htmlspecialchars($subject ?: 'General Feedback');
         $msg_text = htmlspecialchars($message);
 
-        $sentiment_class =$rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');$sentiment_text = $rating >= 4 ? 'Positive' : ($rating == 3 ? 'Average' : 'Attention');
+        $sentiment_class = $rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');
+        $sentiment_text = $rating >= 4 ? 'Positive' : ($rating == 3 ? 'Average' : 'Attention');
 
         $html_item = "
-        <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' .$msg_text) . "'>
+        <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' . $msg_text) . "'>
             <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;'>
                 <div class='stars'>{$stars_html}</div>
                 <div style='display: flex; align-items: center; gap: 8px;'>
@@ -68,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     exit;
 }
 
-$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY id DESC";
-$feedback_result = mysqli_query($conn,$feedback_query);
+$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY 1 DESC";
+$feedback_result = mysqli_query($conn, $feedback_query);
 
 $total_feedbacks = 0;
 $total_rating_sum = 0;
@@ -77,7 +79,7 @@ $rating_counts = [1=>0, 2=>0, 3=>0, 4=>0, 5=>0];
 
 $all_feedbacks_array = [];
 if ($feedback_result) {
-    while ($row = mysqli_fetch_assoc($feedback_result)) {
+    while ($row = mysqli_fetch_array($feedback_result)) {
         $all_feedbacks_array[] =$row;
         $total_feedbacks++;
         $total_rating_sum += (int)$row['rating'];
@@ -163,6 +165,10 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .form-control:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12); }
         textarea.form-control { resize: vertical; min-height: 130px; }
 
+        .preset-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        .preset-tag { background: var(--bg-main); border: 1px solid var(--border); padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; color: var(--text-sub); cursor: pointer; }
+        .preset-tag:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
         .char-count { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: var(--text-sub); font-weight: 700; }
 
         .star-rating { display: flex; gap: 10px; font-size: 26px; cursor: pointer; flex-direction: row-reverse; justify-content: flex-end; }
@@ -220,7 +226,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             </ul>
         </div>
         <div style="font-size: 12px; color: var(--text-sub); text-align: center; padding-top: 20px; border-top: 1px solid var(--border);">
-            CampusBite AI Pro v7.0
+            CampusBite AI Pro v8.0
         </div>
     </div>
 
@@ -230,7 +236,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 <i class="fa-solid fa-comment-dots"></i> AI Enterprise Feedback Hub
             </div>
             <div class="header-actions">
-                <button class="action-btn" id="exportBtn" title="Export Feedback Data"><i class="fa-solid fa-download"></i> Export Data</button>
+                <button class="action-btn" id="exportBtn" title="Export Feedback Data"><i class="fa-solid fa-download"></i> Export</button>
                 <button class="action-btn" id="themeToggle" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
             </div>
         </div>
@@ -276,6 +282,12 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 <form id="feedbackForm">
                     <div class="form-group">
                         <label class="form-label">Subject / Topic</label>
+                        <div class="preset-tags">
+                            <span class="preset-tag" onclick="setSubject('Food Quality')">Food Quality</span>
+                            <span class="preset-tag" onclick="setSubject('Delivery Speed')">Delivery Speed</span>
+                            <span class="preset-tag" onclick="setSubject('Customer Service')">Customer Service</span>
+                            <span class="preset-tag" onclick="setSubject('Pricing & Value')">Pricing & Value</span>
+                        </div>
                         <input type="text" name="subject" id="subject" class="form-control" placeholder="e.g. Food Quality, Delivery Speed">
                     </div>
 
@@ -326,7 +338,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                                 $r = (int)$fb['rating'];
                                 $s_class =$r >= 4 ? 'sentiment-positive' : ($r == 3 ? 'sentiment-neutral' : 'sentiment-negative');$s_text = $r >= 4 ? 'Positive' : ($r == 3 ? 'Average' : 'Attention');
                             ?>
-                            <div class="feedback-item" id="feedback-item-<?= $fb['id']; ?>" data-id="<?= $fb['id']; ?>" data-rating="<?= $r; ?>" data-text="<?= strtolower(htmlspecialchars($fb['subject'] . ' ' .$fb['message'])); ?>">
+                            <div class="feedback-item" id="feedback-item-<?= $fb[0]; ?>" data-id="<?= $fb[0]; ?>" data-rating="<?= $r; ?>" data-text="<?= strtolower(htmlspecialchars($fb['subject'] . ' ' .$fb['message'])); ?>">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <div class="stars">
                                         <?= str_repeat('<i class="fa-solid fa-star"></i>', $r); ?>
@@ -334,7 +346,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <span class="sentiment-badge <?= $s_class; ?>"><?= $s_text; ?></span>
-                                        <button onclick="deleteFeedback(<?= $fb['id']; ?>)" title="Delete Feedback" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:13px; transition:0.2s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--text-sub)'">
+                                        <button onclick="deleteFeedback(<?= $fb[0]; ?>)" title="Delete Feedback" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:13px; transition:0.2s;" onmouseover='this.style.color="#ef4444"' onmouseout='this.style.color="var(--text-sub)"'>
                                             <i class="fa-solid fa-trash-can"></i>
                                         </button>
                                     </div>
@@ -362,6 +374,10 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
     </div>
 
     <script>
+        function setSubject(val) {
+            document.getElementById('subject').value = val;
+        }
+
         const themeToggle = document.getElementById('themeToggle');
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme');
