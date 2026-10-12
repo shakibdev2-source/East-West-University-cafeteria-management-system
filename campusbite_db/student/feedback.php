@@ -96,7 +96,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Feedback Hub | CampusBite</title>
+    <title>World-Class Enterprise Feedback | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -109,41 +109,42 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             --text-main: #0f172a;
             --text-sub: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --radius: 20px;
         }
 
         [data-theme="dark"] {
-            --bg-main: #090d16;
-            --card-bg: #111827;
+            --bg-main: #030712;
+            --card-bg: #0f172a;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
-            --border: #1f2937;
+            --border: #1e293b;
             --primary-light: rgba(99, 102, 241, 0.15);
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
         body { display: flex; background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; }
+        .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; backdrop-filter: blur(10px); }
         .brand { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
         .brand-icon { background: linear-gradient(135deg, var(--primary), #818cf8); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 18px rgba(99, 102, 241, 0.25); }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-        .nav-item a { display: flex; align-items: center; gap: 12px; padding: 11px 16px; text-decoration: none; color: var(--text-sub); font-size: 13.5px; font-weight: 600; border-radius: 12px; }
+        .nav-item a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: var(--text-sub); font-size: 14px; font-weight: 600; border-radius: 12px; }
         .nav-item.active a, .nav-item a:hover { background: var(--primary-light); color: var(--primary); font-weight: 700; }
 
         .main-content { flex: 1; margin-left: 260px; padding: 32px 40px; overflow-y: auto; max-width: 1400px; }
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .page-title { font-size: 24px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
-        .page-title i { color: var(--primary); background: var(--primary-light); padding: 10px; border-radius: 12px; font-size: 18px; }
+        .page-title { font-size: 26px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
+        .page-title i { color: var(--primary); background: var(--primary-light); padding: 11px; border-radius: 12px; font-size: 18px; }
 
         .header-actions { display: flex; gap: 10px; align-items: center; }
-        .action-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 9px 14px; border-radius: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13px; font-weight: 700; box-shadow: var(--shadow); }
+        .action-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13px; font-weight: 700; box-shadow: var(--shadow); }
         .action-btn:hover { border-color: var(--primary); color: var(--primary); }
 
         .analytics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-        .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow); }
-        .analytic-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow); }
+        .analytic-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
         .analytic-icon.blue { background: var(--primary-light); color: var(--primary); }
         .analytic-icon.amber { background: #fef3c7; color: #d97706; }
         .analytic-icon.green { background: #dcfce7; color: #16a34a; }
@@ -156,17 +157,17 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
-        .feedback-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-        .card { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); padding: 24px; box-shadow: var(--shadow); }
+        .feedback-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 24px; align-items: start; }
+        .card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px; box-shadow: var(--shadow); }
         
-        .form-group { margin-bottom: 18px; position: relative; }
-        .form-label { display: block; font-size: 11.5px; font-weight: 800; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-control { width: 100%; padding: 12px 16px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 12px; font-size: 13.5px; outline: none; color: var(--text-main); }
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-label { display: block; font-size: 11.5px; font-weight: 800; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control { width: 100%; padding: 13px 16px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 12px; font-size: 13.5px; outline: none; color: var(--text-main); }
         .form-control:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-        textarea.form-control { resize: vertical; min-height: 110px; }
+        textarea.form-control { resize: vertical; min-height: 120px; }
 
         .preset-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-        .preset-tag { background: var(--bg-main); border: 1px solid var(--border); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; color: var(--text-sub); cursor: pointer; }
+        .preset-tag { background: var(--bg-main); border: 1px solid var(--border); padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; color: var(--text-sub); cursor: pointer; }
         .preset-tag:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
 
         .char-count { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: var(--text-sub); font-weight: 700; }
@@ -174,27 +175,27 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .star-rating { display: flex; gap: 8px; font-size: 24px; cursor: pointer; flex-direction: row-reverse; justify-content: flex-end; }
         .star-rating input { display: none; }
         .star-rating label { color: var(--border); transition: transform 0.2s; }
-        .star-rating label:hover { transform: scale(1.1); }
+        .star-rating label:hover { transform: scale(1.15); }
         .star-rating input:checked ~ label,
         .star-rating label:hover,
         .star-rating label:hover ~ label { color: #f59e0b; }
 
-        .btn-submit { background: linear-gradient(135deg, var(--primary), #818cf8); color: #ffffff; border: none; padding: 14px 20px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3); }
+        .btn-submit { background: linear-gradient(135deg, var(--primary), #818cf8); color: #ffffff; border: none; padding: 14px 20px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); }
         .btn-submit:hover { opacity: 0.95; transform: translateY(-1px); }
 
         .search-filter-box { display: flex; gap: 8px; margin-bottom: 12px; }
-        .search-input { flex: 1; padding: 10px 14px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; outline: none; color: var(--text-main); }
+        .search-input { flex: 1; padding: 11px 14px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; outline: none; color: var(--text-main); }
         .search-input:focus { border-color: var(--primary); background: var(--card-bg); }
 
-        .filter-bar { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
+        .filter-bar { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
         .filter-btn { background: var(--bg-main); border: none; padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; color: var(--text-sub); cursor: pointer; white-space: nowrap; }
         .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; }
 
-        .feedback-scroll { max-height: 380px; overflow-y: auto; padding-right: 4px; }
+        .feedback-scroll { max-height: 400px; overflow-y: auto; padding-right: 4px; }
         .feedback-scroll::-webkit-scrollbar { width: 5px; }
         .feedback-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        .feedback-item { background: var(--bg-main); border: 1px solid var(--border); padding: 16px; border-radius: 14px; margin-bottom: 12px; animation: fadeInUp 0.3s ease forwards; }
+        .feedback-item { background: var(--bg-main); border: 1.5px solid var(--border); padding: 16px; border-radius: 14px; margin-bottom: 12px; animation: fadeInUp 0.3s ease forwards; }
         .feedback-item:hover { border-color: var(--primary); box-shadow: var(--shadow); }
         .stars { color: #f59e0b; font-size: 12px; }
 
@@ -226,7 +227,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             </ul>
         </div>
         <div style="font-size: 11px; color: var(--text-sub); text-align: center; padding-top: 16px; border-top: 1px solid var(--border);">
-            CampusBite AI Pro v10.0
+            CampusBite AI Pro v11.0 World-Class
         </div>
     </div>
 
