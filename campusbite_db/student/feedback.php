@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
 }
 
 $feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY 1 DESC";
-$feedback_result = mysqli_query($conn, $feedback_query);
+$feedback_result = mysqli_query($conn,$feedback_query);
 
 $total_feedbacks = 0;
 $total_rating_sum = 0;
@@ -96,7 +96,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next-Gen Enterprise Feedback | CampusBite</title>
+    <title>World-Class Enterprise Feedback | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -109,23 +109,25 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             --text-main: #0f172a;
             --text-sub: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
+            --shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
+            --glass: rgba(255, 255, 255, 0.85);
         }
 
         [data-theme="dark"] {
-            --bg-main: #060913;
-            --card-bg: #111827;
+            --bg-main: #030712;
+            --card-bg: #0f172a;
             --text-main: #f8fafc;
-            --text-sub: #9ca3af;
-            --border: #1f2937;
+            --text-sub: #94a3b8;
+            --border: #1e293b;
             --primary-light: rgba(99, 102, 241, 0.15);
-            --shadow: 0 10px 30px -5px rgba(0,0,0,0.6);
+            --shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.3);
+            --glass: rgba(15, 23, 42, 0.85);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
         body { display: flex; background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; }
+        .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; backdrop-filter: blur(10px); }
         .brand { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
         .brand-icon { background: linear-gradient(135deg, var(--primary), #818cf8); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 18px rgba(99, 102, 241, 0.25); }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
@@ -142,7 +144,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .action-btn:hover { border-color: var(--primary); color: var(--primary); }
 
         .analytics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
-        .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); }
+        .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); backdrop-filter: blur(10px); }
         .analytic-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .analytic-icon.blue { background: var(--primary-light); color: var(--primary); }
         .analytic-icon.amber { background: #fef3c7; color: #d97706; }
@@ -150,14 +152,14 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .analytic-icon.purple { background: #f3e8ff; color: #9333ea; }
 
         .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-        .toast { padding: 14px 22px; border-radius: 14px; font-size: 13.5px; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; }
+        .toast { padding: 14px 22px; border-radius: 14px; font-size: 13.5px; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; backdrop-filter: blur(10px); }
         .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
         .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
         @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(12px); } }
 
         .feedback-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; align-items: start; }
-        .card { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border); padding: 32px; box-shadow: var(--shadow); }
+        .card { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border); padding: 32px; box-shadow: var(--shadow); backdrop-filter: blur(10px); }
         
         .form-group { margin-bottom: 22px; position: relative; }
         .form-label { display: block; font-size: 12px; font-weight: 800; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -194,7 +196,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .feedback-scroll::-webkit-scrollbar { width: 6px; }
         .feedback-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        .feedback-item { background: var(--bg-main); border: 1px solid var(--border); padding: 18px; border-radius: 16px; margin-bottom: 14px; transition: all 0.3s ease; animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .feedback-item { background: var(--bg-main); border: 1px solid var(--border); padding: 18px; border-radius: 16px; margin-bottom: 14px; transition: all 0.3s ease; animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; position: relative; overflow: hidden; }
         .feedback-item:hover { border-color: var(--primary); box-shadow: var(--shadow); transform: translateY(-2px); }
         .stars { color: #f59e0b; font-size: 13px; }
 
@@ -226,7 +228,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             </ul>
         </div>
         <div style="font-size: 12px; color: var(--text-sub); text-align: center; padding-top: 20px; border-top: 1px solid var(--border);">
-            CampusBite AI Pro v8.0
+            CampusBite AI Pro v9.0 World-Class
         </div>
     </div>
 
