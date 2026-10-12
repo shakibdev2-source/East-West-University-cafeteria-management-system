@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     header('Content-Type: application/json');
     $del_id = intval($_POST['delete_id']);
     $del_sql = "DELETE FROM feedback WHERE id = '$del_id' AND user_id = '$user_id'";
-    if (mysqli_query($conn,$del_sql)) {
+    if (mysqli_query($conn, $del_sql)) {
         echo json_encode(['status' => 'success', 'message' => 'Feedback deleted successfully!']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Failed to delete feedback.']);
@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     header('Content-Type: application/json');
-    $subject = mysqli_real_escape_string($conn, trim($_POST['subject'] ?? ''));$message = mysqli_real_escape_string($conn, trim($_POST['message'] ?? ''));
+    $subject = mysqli_real_escape_string($conn, trim($_POST['subject'] ?? ''));
+    $message = mysqli_real_escape_string($conn, trim($_POST['message'] ?? ''));
     $rating = intval($_POST['rating'] ?? 5);
 
     if (empty($message)) {
@@ -33,16 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
 
     $insert_sql = "INSERT INTO feedback (user_id, subject, message, rating) VALUES ('$user_id', '$subject', '$message', '$rating')";
     
-    if (mysqli_query($conn,$insert_sql)) {
+    if (mysqli_query($conn, $insert_sql)) {
         $new_id = mysqli_insert_id($conn);
-        $date_formatted = date('M d, Y - h:i A');$stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
+        $date_formatted = date('M d, Y - h:i A');
+        $stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
         $sub_text = htmlspecialchars($subject ?: 'General Feedback');
         $msg_text = htmlspecialchars($message);
 
-        $sentiment_class =$rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');$sentiment_text = $rating >= 4 ? 'Positive' : ($rating == 3 ? 'Average' : 'Attention');
+        $sentiment_class = $rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');
+        $sentiment_text = $rating >= 4 ? 'Positive' : ($rating == 3 ? 'Average' : 'Attention');
 
         $html_item = "
-        <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' .$msg_text) . "'>
+        <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' . $msg_text) . "'>
             <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;'>
                 <div class='stars'>{$stars_html}</div>
                 <div style='display: flex; align-items: center; gap: 8px;'>
@@ -60,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             </div>
         </div>";
 
-        echo json_encode(['status' => 'success', 'html' => $html_item, 'new_id' => $new_id, 'rating' =>$rating, 'message' => 'Feedback submitted successfully!']);
+        echo json_encode(['status' => 'success', 'html' => $html_item, 'message' => 'Feedback submitted successfully!']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Database Error: ' . mysqli_error($conn)]);
     }
@@ -93,30 +96,30 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Enterprise Feedback | CampusBite</title>
+    <title>Next-Gen Enterprise Feedback | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
             --primary-light: #eef2ff;
-            --bg-main: #f6f8fb;
+            --bg-main: #f8fafc;
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-sub: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 10px 30px -5px rgba(0,0,0,0.04);
+            --shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
         }
 
         [data-theme="dark"] {
-            --bg-main: #0b1120;
-            --card-bg: #1e293b;
+            --bg-main: #060913;
+            --card-bg: #111827;
             --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --border: #334155;
-            --primary-light: rgba(79, 70, 229, 0.15);
-            --shadow: 0 10px 30px -5px rgba(0,0,0,0.5);
+            --text-sub: #9ca3af;
+            --border: #1f2937;
+            --primary-light: rgba(99, 102, 241, 0.15);
+            --shadow: 0 10px 30px -5px rgba(0,0,0,0.6);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
@@ -124,7 +127,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 
         .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; }
         .brand { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
-        .brand-icon { background: linear-gradient(135deg, var(--primary), #6366f1); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25); }
+        .brand-icon { background: linear-gradient(135deg, var(--primary), #818cf8); width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 18px rgba(99, 102, 241, 0.25); }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
         .nav-item a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: var(--text-sub); font-size: 14px; font-weight: 600; border-radius: 12px; }
         .nav-item.active a, .nav-item a:hover { background: var(--primary-light); color: var(--primary); font-weight: 700; }
@@ -134,17 +137,20 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .page-title { font-size: 28px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 14px; letter-spacing: -0.5px; }
         .page-title i { color: var(--primary); background: var(--primary-light); padding: 12px; border-radius: 14px; font-size: 20px; }
 
-        .header-actions { display: flex; gap: 12px; align-items: center; }
-        .action-icon-btn { background: var(--card-bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 16px; box-shadow: var(--shadow); }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .action-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13px; font-weight: 700; box-shadow: var(--shadow); }
+        .action-btn:hover { border-color: var(--primary); color: var(--primary); }
 
-        .analytics-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 28px; }
-        .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px 24px; display: flex; align-items: center; gap: 18px; box-shadow: var(--shadow); transition: transform 0.3s ease; }
-        .analytic-card:hover { transform: translateY(-3px); }
-        .analytic-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        /* Analytics Strip */
+        .analytics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
+        .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); }
+        .analytic-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .analytic-icon.blue { background: var(--primary-light); color: var(--primary); }
         .analytic-icon.amber { background: #fef3c7; color: #d97706; }
         .analytic-icon.green { background: #dcfce7; color: #16a34a; }
+        .analytic-icon.purple { background: #f3e8ff; color: #9333ea; }
 
+        /* Toast */
         .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { padding: 14px 22px; border-radius: 14px; font-size: 13.5px; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; }
         .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
@@ -158,7 +164,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .form-group { margin-bottom: 22px; position: relative; }
         .form-label { display: block; font-size: 12px; font-weight: 800; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
         .form-control { width: 100%; padding: 14px 18px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 14px; font-size: 14px; outline: none; transition: all 0.3s ease; color: var(--text-main); }
-        .form-control:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12); }
+        .form-control:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12); }
         textarea.form-control { resize: vertical; min-height: 130px; }
 
         .char-count { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: var(--text-sub); font-weight: 700; }
@@ -171,8 +177,8 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .star-rating label:hover,
         .star-rating label:hover ~ label { color: #f59e0b; }
 
-        .btn-submit { background: linear-gradient(135deg, var(--primary), #6366f1); color: #ffffff; border: none; padding: 16px 20px; border-radius: 14px; font-weight: 800; font-size: 14.5px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35); transition: all 0.3s ease; }
-        .btn-submit:hover { background: linear-gradient(135deg, var(--primary-hover), var(--primary)); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45); }
+        .btn-submit { background: linear-gradient(135deg, var(--primary), #818cf8); color: #ffffff; border: none; padding: 16px 20px; border-radius: 14px; font-weight: 800; font-size: 14.5px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35); transition: all 0.3s ease; }
+        .btn-submit:hover { background: linear-gradient(135deg, var(--primary-hover), var(--primary)); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(99, 102, 241, 0.45); }
 
         .search-filter-box { display: flex; gap: 10px; margin-bottom: 16px; }
         .search-input { flex: 1; padding: 11px 16px; background: var(--bg-main); border: 1.5px solid var(--border); border-radius: 12px; font-size: 13.5px; outline: none; color: var(--text-main); }
@@ -180,7 +186,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 
         .filter-bar { display: flex; gap: 6px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 4px; }
         .filter-btn { background: var(--bg-main); border: none; padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; white-space: nowrap; }
-        .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.25); }
+        .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(99,102,241,0.25); }
 
         .feedback-scroll { max-height: 440px; overflow-y: auto; padding-right: 6px; }
         .feedback-scroll::-webkit-scrollbar { width: 6px; }
@@ -218,17 +224,18 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             </ul>
         </div>
         <div style="font-size: 12px; color: var(--text-sub); text-align: center; padding-top: 20px; border-top: 1px solid var(--border);">
-            CampusBite v6.0 Ultimate
+            CampusBite AI Pro v7.0
         </div>
     </div>
 
     <div class="main-content">
         <div class="top-header">
             <div class="page-title">
-                <i class="fa-solid fa-comment-dots"></i> Ultimate Feedback Portal
+                <i class="fa-solid fa-comment-dots"></i> AI Enterprise Feedback Hub
             </div>
             <div class="header-actions">
-                <button class="action-icon-btn" id="themeToggle" title="Toggle Dark/Light Mode"><i class="fa-solid fa-moon"></i></button>
+                <button class="action-btn" id="exportBtn" title="Export Feedback Data"><i class="fa-solid fa-download"></i> Export Data</button>
+                <button class="action-btn" id="themeToggle" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
             </div>
         </div>
 
@@ -236,23 +243,30 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             <div class="analytic-card">
                 <div class="analytic-icon blue"><i class="fa-solid fa-comments"></i></div>
                 <div>
-                    <div style="font-size: 11.5px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Total Feedbacks</div>
-                    <div style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 2px;" id="statTotal"><?= $total_feedbacks; ?></div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Total</div>
+                    <div style="font-size: 20px; font-weight: 800; color: var(--text-main);" id="statTotal"><?= $total_feedbacks; ?></div>
                 </div>
             </div>
             <div class="analytic-card">
                 <div class="analytic-icon amber"><i class="fa-solid fa-star"></i></div>
                 <div>
-                    <div style="font-size: 11.5px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Average Rating</div>
-                    <div style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 2px;" id="statAvg"><?= $avg_rating; ?> / 5.0</div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Average</div>
+                    <div style="font-size: 20px; font-weight: 800; color: var(--text-main);" id="statAvg"><?= $avg_rating; ?> / 5</div>
                 </div>
             </div>
             <div class="analytic-card">
                 <div class="analytic-icon green"><i class="fa-solid fa-shield-heart"></i></div>
                 <div>
-                    <div style="font-size: 11.5px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Satisfaction Rate</div>
-                    <div style="font-size: 22px; font-weight: 800; color: var(--text-main); margin-top: 2px;" id="statSat">
-                        <span id="statSatVal"><?= $satisfaction_rate; ?></span>%
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">Satisfaction</div>
+                    <div style="font-size: 20px; font-weight: 800; color: var(--text-main);" id="statSat"><span id="statSatVal"><?= $satisfaction_rate; ?></span>%</div>
+                </div>
+            </div>
+            <div class="analytic-card">
+                <div class="analytic-icon purple"><i class="fa-solid fa-brain"></i></div>
+                <div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;">AI Sentiment</div>
+                    <div style="font-size: 20px; font-weight: 800; color: var(--text-main);" id="aiSentimentStatus">
+                        <?= $satisfaction_rate >= 70 ? 'Excellent' : 'Stable'; ?>
                     </div>
                 </div>
             </div>
@@ -495,6 +509,31 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 currentFilter = btn.getAttribute('data-filter');
                 applyFilterAndSearch();
             });
+        });
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const items = document.querySelectorAll('.feedback-item');
+            if (items.length === 0) {
+                showToast('No feedback data available to export!', 'error');
+                return;
+            }
+
+            let csv = 'Subject,Rating,Date\n';
+            items.forEach(item => {
+                const subject = item.querySelector('div:nth-child(2)').innerText.replace(/,/g, '');
+                const rating = item.getAttribute('data-rating');
+                const date = item.querySelector('div:last-child').innerText.trim();
+                csv += `"${subject}",${rating},"${date}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', 'campusbite_feedbacks.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('Feedback data exported successfully!', 'success');
         });
     </script>
 </body>
