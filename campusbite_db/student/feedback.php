@@ -36,16 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     
     if (mysqli_query($conn, $insert_sql)) {
         $new_id = mysqli_insert_id($conn);
-        $date_formatted = date('M d, Y - h:i A');
-        $stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
+        $date_formatted = date('M d, Y - h:i A');$stars_html = str_repeat('<i class="fa-solid fa-star"></i>', $rating) . str_repeat('<i class="fa-regular fa-star" style="color:#cbd5e1;"></i>', 5 - $rating);
         $sub_text = htmlspecialchars($subject ?: 'General Feedback');
         $msg_text = htmlspecialchars($message);
 
-        $sentiment_class = $rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');
-        $sentiment_text = $rating >= 4 ? 'Positive' : ($rating == 3 ? 'Average' : 'Attention');
+        $sentiment_class =$rating >= 4 ? 'sentiment-positive' : ($rating == 3 ? 'sentiment-neutral' : 'sentiment-negative');$sentiment_text = $rating >= 4 ? 'Positive' : ($rating == 3 ? 'Average' : 'Attention');
 
         $html_item = "
-        <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' . $msg_text) . "'>
+        <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' .$msg_text) . "'>
             <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;'>
                 <div class='stars'>{$stars_html}</div>
                 <div style='display: flex; align-items: center; gap: 8px;'>
@@ -141,7 +139,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .action-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13px; font-weight: 700; box-shadow: var(--shadow); }
         .action-btn:hover { border-color: var(--primary); color: var(--primary); }
 
-        /* Analytics Strip */
         .analytics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
         .analytic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); }
         .analytic-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -150,7 +147,6 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .analytic-icon.green { background: #dcfce7; color: #16a34a; }
         .analytic-icon.purple { background: #f3e8ff; color: #9333ea; }
 
-        /* Toast */
         .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { padding: 14px 22px; border-radius: 14px; font-size: 13.5px; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; }
         .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
@@ -510,6 +506,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 applyFilterAndSearch();
             });
         });
+
         document.getElementById('exportBtn').addEventListener('click', () => {
             const items = document.querySelectorAll('.feedback-item');
             if (items.length === 0) {
