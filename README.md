@@ -108,7 +108,7 @@ The **East West University Cafeteria Management System** is a full-stack web app
 
 ---
 
-### 🛡️ Admin & Operational Control Center
+### Admin & Operational Control Center
 
 #### 📊 Admin Dashboard & Overview
 > **Admin Control Center:** Comprehensive oversight of daily orders, total revenue counters, active user distribution (Students & Staff), and quick management actions.
