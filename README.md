@@ -1,7 +1,9 @@
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Cascadia+Code&weight=800&size=42&duration=1800&pause=600&color=FF1E27&center=true&vCenter=true&repeat=true&width=1100&height=100&lines=%E2%9A%A0%EF%B8%8F+Project+Currently+Under+Development.;%F0%9F%92%A5+Stay+Tuned+As+We+Update+It+Continuously!;" alt="Typing SVG" />
 
-
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=shakibdev2-source&color=blueviolet&style=for-the-badge&label=REPOSITORY+VIEWS" alt="Visitor Count" />
+</p>
   
 </p>
 </p>
