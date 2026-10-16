@@ -1,4 +1,4 @@
-                              ![Typing SVG](https://readme-typing-svg.demolab.com?  font=JetBrains+Mono&weight=700&size=18&duration=2800&pause=900&color=38BDF8&center=true&vCenter=true&width=650&height=38&lines=Project+currently+under+development.;Stay+tuned+as+we+update+it+continuously!)
+                     <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=18&duration=2800&pause=900&color=38BDF8&center=true&vCenter=true&width=650&height=38&lines=Project+currently+under+development.;Stay+tuned+as+we+update+it+continuously!" alt="Typing SVG" />
 
 <div align="center">
   <h1>🍽️ East West University Cafeteria Management System</h1>
