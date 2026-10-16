@@ -1,4 +1,4 @@
-
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=18&duration=2800&pause=900&color=38BDF8&center=true&vCenter=true&width=650&height=38&lines=AES-256-CBC+%2B+HMAC-SHA256+%2B+PBKDF2;Next.js+14+%2B+Node.js+%2B+Express+%2B+MySQL;Two-Factor+KeyFile+%2B+Decoy+Mode;Military-Grade+File+Encryption+Platform;Role-Based+Access+Control+%28RBAC%29)](https://git.io/typing-svg)
 
 
 
