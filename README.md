@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Cascadia+Code&weight=800&size=42&duration=1800&pause=600&color=FF1E27&center=true&vCenter=true&repeat=true&width=1100&height=100&lines=%E2%9A%A0%EF%B8%8F+Project+Currently+Under+Development.;%F0%9F%92%A5+Stay+Tuned+As+We+Update+It+Continuously!;" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Cascadia+Code&weight=800&size=52&duration=1800&pause=600&color=FF1E27&center=true&vCenter=true&repeat=true&width=1100&height=100&lines=%E2%9A%A0%EF%B8%8F+Project+Currently+Under+Development.;%F0%9F%92%A5+Stay+Tuned+As+We+Update+It+Continuously!;" alt="Typing SVG" />
 
 
   
@@ -11,7 +11,7 @@
 </p>
 </p>
 <div align="center">
-  <h1>🍽️ East West University Cafeteria Management System</h1>
+  <h1> East West University Cafeteria Management System</h1>
   <p>An automated, modern, and seamless digital cafeteria management solution.</p>
 
   <!-- Badges -->
