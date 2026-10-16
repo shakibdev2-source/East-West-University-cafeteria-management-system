@@ -1,5 +1,6 @@
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=800&size=20&duration=2000&pause=500&color=FF0033&center=true&vCenter=true&repeat=true&width=750&height=50&lines=%F0%9F%9A%A8+PROJECT+CURRENTLY+UNDER+DEVELOPMENT...;%F0%9F%94%A5+Stay+tuned+as+we+update+it+continuously!;" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=800&size=20&duration=2000&pause=500&color=00FF66&center=true&vCenter=true&repeat=true&width=750&height=50&lines=%F0%9F%92%BB+Project+Currently+Under+Development...;%E2%9A%A1+Stay+tuned+as+we+update+it+continuously!;" alt="Matrix Typing SVG" />
+</p>
 </p>
 <div align="center">
   <h1>🍽️ East West University Cafeteria Management System</h1>
