@@ -1,4 +1,6 @@
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=20&duration=3000&pause=1000&color=00F2FE&multiline=false&center=true&vCenter=true&width=700&height=45&lines=🚀+Project+currently+under+development...;✨+Stay+tuned+as+we+update+it+continuously!)]
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=800&size=20&duration=2000&pause=500&color=FF0033&center=true&vCenter=true&repeat=true&width=750&height=50&lines=%F0%9F%9A%A8+PROJECT+CURRENTLY+UNDER+DEVELOPMENT...;%F0%9F%94%A5+Stay+tuned+as+we+update+it+continuously!;" alt="Typing SVG" />
+</p>
 <div align="center">
   <h1>🍽️ East West University Cafeteria Management System</h1>
   <p>An automated, modern, and seamless digital cafeteria management solution.</p>
