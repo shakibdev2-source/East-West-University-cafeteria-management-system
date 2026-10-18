@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     $rating = intval($_POST['rating'] ?? 5);
 
     if (empty($message)) {
-        echo json_encode(['status' => 'error', 'message' => 'Please write your feedback message!']);
+        echo json_encode(['status' => 'error', 'message' => 'Please write your feedback!']);
         exit;
     }
 
@@ -70,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     exit;
 }
 
-$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY 1 DESC";
-$feedback_result = mysqli_query($conn,$feedback_query);
+$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY id DESC";
+$feedback_result = mysqli_query($conn, $feedback_query);
 
 $total_feedbacks = 0;
 $total_rating_sum = 0;
@@ -79,16 +79,18 @@ $rating_counts = [1=>0, 2=>0, 3=>0, 4=>0, 5=>0];
 
 $all_feedbacks_array = [];
 if ($feedback_result) {
-    while ($row = mysqli_fetch_array($feedback_result)) {
-        $all_feedbacks_array[] =$row;
+    while ($row = mysqli_fetch_assoc($feedback_result)) {
+        $all_feedbacks_array[] = $row;
         $total_feedbacks++;
-        $total_rating_sum += (int)$row['rating'];
-        if(isset($rating_counts[(int)$row['rating']])) {
-            $rating_counts[(int)$row['rating']]++;
+        $r_val = (int)$row['rating'];
+        $total_rating_sum += $r_val;
+        if(isset($rating_counts[$r_val])) {
+            $rating_counts[$r_val]++;
         }
     }
 }
-$avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_feedbacks, 1) : '0.0';$satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_counts[4]) /$total_feedbacks) * 100) : 0;
+$avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_feedbacks, 1) : '0.0';
+$satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_counts[4]) / $total_feedbacks) * 100) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -96,7 +98,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World-Class Enterprise Feedback | CampusBite</title>
+    <title>Enterprise Feedback Hub | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -109,7 +111,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             --text-main: #0f172a;
             --text-sub: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
             --radius: 20px;
         }
 
@@ -149,6 +151,11 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         .analytic-icon.amber { background: #fef3c7; color: #d97706; }
         .analytic-icon.green { background: #dcfce7; color: #16a34a; }
         .analytic-icon.purple { background: #f3e8ff; color: #9333ea; }
+
+        .breakdown-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+        .bar-row { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; }
+        .bar-track { flex: 1; height: 8px; background: var(--bg-main); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+        .bar-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.5s ease; }
 
         .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.5s forwards; color: #fff; }
@@ -227,7 +234,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             </ul>
         </div>
         <div style="font-size: 11px; color: var(--text-sub); text-align: center; padding-top: 16px; border-top: 1px solid var(--border);">
-            CampusBite AI Pro v11.0 World-Class
+            CampusBite AI Pro v12.0 Clean
         </div>
     </div>
 
@@ -237,7 +244,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 <i class="fa-solid fa-comment-dots"></i> Enterprise Feedback Hub
             </div>
             <div class="header-actions">
-                <button class="action-btn" id="exportBtn" title="Export Feedback Data"><i class="fa-solid fa-download"></i> Export</button>
+                <button class="action-btn" id="exportBtn" title="Export Feedback Data"><i class="fa-solid fa-download"></i> Export CSV</button>
                 <button class="action-btn" id="themeToggle" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
             </div>
         </div>
@@ -275,6 +282,27 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             </div>
         </div>
 
+        <!-- Rating Breakdown Meters -->
+        <div class="breakdown-card">
+            <div>
+                <h4 style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 12px;"><i class="fa-solid fa-chart-pie" style="color:var(--primary)"></i> Rating Distribution</h4>
+                <?php for($i=5; $i>=1; $i--):$count = $rating_counts[$i];
+                    $pct =$total_feedbacks > 0 ? round(($count / $total_feedbacks) * 100) : 0;
+                ?>
+                <div class="bar-row">
+                    <span style="width: 35px;"><?= $i; ?> ⭐</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: <?= $pct; ?>%;"></div></div>
+                    <span style="width: 35px; text-align: right;"><?= $count; ?></span>
+                </div>
+                <?php endfor; ?>
+            </div>
+            <div style="border-left: 1px solid var(--border); padding-left: 20px; display: flex; flex-direction: column; justify-content: center;">
+                <div style="font-size: 12px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 6px;">Draft Status</div>
+                <div id="draftStatusIndicator" style="font-size: 14px; font-weight: 700; color: var(--text-main);">No unsaved drafts</div>
+                <button onclick="clearDraft()" style="margin-top: 10px; background: none; border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; color: var(--text-sub); cursor: pointer; width: fit-content;">Clear Draft</button>
+            </div>
+        </div>
+
         <div class="feedback-grid">
             <div class="card">
                 <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 18px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
@@ -304,7 +332,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Your Feedback / Comments *</label>
+                        <label class="form-label">Feedback Message *</label>
                         <textarea name="message" id="message" class="form-control" placeholder="Tell us what you liked or how we can improve..." maxlength="500" required></textarea>
                         <div class="char-count"><span id="charCount">0</span>/500</div>
                     </div>
@@ -339,7 +367,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                                 $r = (int)$fb['rating'];
                                 $s_class =$r >= 4 ? 'sentiment-positive' : ($r == 3 ? 'sentiment-neutral' : 'sentiment-negative');$s_text = $r >= 4 ? 'Positive' : ($r == 3 ? 'Average' : 'Attention');
                             ?>
-                            <div class="feedback-item" id="feedback-item-<?= $fb[0]; ?>" data-id="<?= $fb[0]; ?>" data-rating="<?= $r; ?>" data-text="<?= strtolower(htmlspecialchars($fb['subject'] . ' ' .$fb['message'])); ?>">
+                            <div class="feedback-item" id="feedback-item-<?= $fb['id']; ?>" data-id="<?= $fb['id']; ?>" data-rating="<?= $r; ?>" data-text="<?= strtolower(htmlspecialchars($fb['subject'] . ' ' .$fb['message'])); ?>">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                     <div class="stars">
                                         <?= str_repeat('<i class="fa-solid fa-star"></i>', $r); ?>
@@ -347,7 +375,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <span class="sentiment-badge <?= $s_class; ?>"><?= $s_text; ?></span>
-                                        <button onclick="deleteFeedback(<?= $fb[0]; ?>)" title="Delete Feedback" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:12px;" onmouseover='this.style.color="#ef4444"' onmouseout='this.style.color="var(--text-sub)"'>
+                                        <button onclick="deleteFeedback(<?= $fb['id']; ?>)" title="Delete Feedback" style="background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:12px;" onmouseover='this.style.color="#ef4444"' onmouseout='this.style.color="var(--text-sub)"'>
                                             <i class="fa-solid fa-trash-can"></i>
                                         </button>
                                     </div>
@@ -377,6 +405,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
     <script>
         function setSubject(val) {
             document.getElementById('subject').value = val;
+            saveDraft();
         }
 
         const themeToggle = document.getElementById('themeToggle');
@@ -397,10 +426,47 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
         }
 
         const messageInput = document.getElementById('message');
+        const subjectInput = document.getElementById('subject');
         const charCount = document.getElementById('charCount');
+        const draftIndicator = document.getElementById('draftStatusIndicator');
+
+        function saveDraft() {
+            localStorage.setItem('cb_feedback_sub', subjectInput.value);
+            localStorage.setItem('cb_feedback_msg', messageInput.value);
+            if(messageInput.value.length > 0 || subjectInput.value.length > 0) {
+                draftIndicator.innerText = "Draft saved locally 💾";
+            } else {
+                draftIndicator.innerText = "No unsaved drafts";
+            }
+        }
+
+        function clearDraft() {
+            localStorage.removeItem('cb_feedback_sub');
+            localStorage.removeItem('cb_feedback_msg');
+            subjectInput.value = '';
+            messageInput.value = '';
+            charCount.innerText = '0';
+            draftIndicator.innerText = "No unsaved drafts";
+            showToast('Draft cleared!', 'success');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedSub = localStorage.getItem('cb_feedback_sub');
+            const savedMsg = localStorage.getItem('cb_feedback_msg');
+            if (savedSub) subjectInput.value = savedSub;
+            if (savedMsg) {
+                messageInput.value = savedMsg;
+                charCount.innerText = savedMsg.length;
+                draftIndicator.innerText = "Draft loaded from storage 📂";
+            }
+        });
+
         messageInput.addEventListener('input', () => {
             charCount.innerText = messageInput.value.length;
+            saveDraft();
         });
+
+        subjectInput.addEventListener('input', saveDraft);
 
         const feedbackForm = document.getElementById('feedbackForm');
         feedbackForm.addEventListener('submit', function(e) {
@@ -424,6 +490,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
                 if (data.status === 'success') {
                     showToast(data.message, 'success');
                     feedbackForm.reset();
+                    clearDraft();
                     charCount.innerText = '0';
 
                     const container = document.getElementById('feedbackContainer');
@@ -533,9 +600,9 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
 
             let csv = 'Subject,Rating,Date\n';
             items.forEach(item => {
-                const subject = item.querySelector('div:nth-child(2)').innerText.replace(/,/g, '');
+                const subject = item.querySelector('div[style*="font-weight: 700"]').innerText.replace(/,/g, '');
                 const rating = item.getAttribute('data-rating');
-                const date = item.querySelector('div:last-child').innerText.trim();
+                const date = item.querySelector('div[style*="font-size: 11px"]').innerText.trim();
                 csv += `"${subject}",${rating},"${date}"\n`;
             });
 
@@ -543,7 +610,7 @@ $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_fe
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.setAttribute('download', 'campusbite_feedbacks.csv');
+            a.setAttribute('download', 'campusbite_feedbacks_clean.csv');
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
