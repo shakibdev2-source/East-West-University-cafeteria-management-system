@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     $rating = intval($_POST['rating'] ?? 5);
 
     if (empty($message)) {
-        echo json_encode(['status' => 'error', 'message' => 'Please write your feedback!']);
+        echo json_encode(['status' => 'error', 'message' => 'Please write your feedback message!']);
         exit;
     }
 
@@ -70,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     exit;
 }
 
-$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY id DESC";
-$feedback_result = mysqli_query($conn, $feedback_query);
+$feedback_query = "SELECT * FROM feedback WHERE user_id = '$user_id' ORDER BY 1 DESC";
+$feedback_result = mysqli_query($conn,$feedback_query);
 
 $total_feedbacks = 0;
 $total_rating_sum = 0;
@@ -79,8 +79,8 @@ $rating_counts = [1=>0, 2=>0, 3=>0, 4=>0, 5=>0];
 
 $all_feedbacks_array = [];
 if ($feedback_result) {
-    while ($row = mysqli_fetch_assoc($feedback_result)) {
-        $all_feedbacks_array[] = $row;
+    while ($row = mysqli_fetch_array($feedback_result)) {
+        $all_feedbacks_array[] =$row;
         $total_feedbacks++;
         $r_val = (int)$row['rating'];
         $total_rating_sum += $r_val;
@@ -90,7 +90,7 @@ if ($feedback_result) {
     }
 }
 $avg_rating = $total_feedbacks > 0 ? number_format($total_rating_sum / $total_feedbacks, 1) : '0.0';
-$satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_counts[4]) / $total_feedbacks) * 100) : 0;
+$satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_counts[4]) /$total_feedbacks) * 100) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -128,7 +128,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         body { display: flex; background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        /* Sidebar with Glassmorphism */
+        /* Sidebar Glassmorphism */
         .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; backdrop-filter: blur(16px); animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
@@ -141,7 +141,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         .nav-item a:hover { transform: translateX(8px); background: var(--primary-light); color: var(--primary); }
         .nav-item.active a { background: var(--primary-light); color: var(--primary); font-weight: 700; transform: translateX(4px); box-shadow: 0 4px 15px rgba(16,185,129,0.15); }
 
-        /* Main Content Layout */
+        /* Main Content Fluid Animation */
         .main-content { flex: 1; margin-left: 260px; padding: 40px 50px; overflow-y: auto; max-width: 1400px; animation: fadeInScale 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.98) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
@@ -154,7 +154,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         .action-btn { background: var(--card-bg); border: 1.5px solid var(--border); padding: 11px 18px; border-radius: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13.5px; font-weight: 700; box-shadow: var(--shadow); transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .action-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 30px rgba(16,185,129,0.25); }
 
-        /* Analytics Strip */
+        /* Analytics Cards */
         .analytics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
         .analytic-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
         .analytic-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); opacity: 0; transition: opacity 0.3s ease; }
@@ -173,9 +173,9 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         .breakdown-card:hover { border-color: var(--primary); box-shadow: 0 25px 50px -15px rgba(16,185,129,0.15); }
         .bar-row { display: flex; align-items: center; gap: 12px; font-size: 12.5px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; }
         .bar-track { flex: 1; height: 10px; background: var(--bg-main); border-radius: 6px; overflow: hidden; border: 1.5px solid var(--border); }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #34d399); border-radius: 6px; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #34d399); border-radius: 6px; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
 
-        /* Toast Container */
+        /* Toast Notifications */
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; }
         .toast { padding: 14px 24px; border-radius: 16px; font-size: 13.5px; font-weight: 700; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; animation: slideInToast 0.45s cubic-bezier(0.16, 1, 0.3, 1), fadeOutToast 0.45s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; backdrop-filter: blur(10px); }
         .toast.success { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4); }
@@ -261,7 +261,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
             </ul>
         </div>
         <div style="font-size: 11.5px; color: var(--text-sub); text-align: center; padding-top: 18px; border-top: 1px solid var(--border);">
-            CampusBite Fluid v14.0
+            CampusBite Fluid v15.0 Pro
         </div>
     </div>
 
@@ -312,8 +312,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         <div class="breakdown-card">
             <div>
                 <h4 style="font-size: 13.5px; font-weight: 800; color: var(--text-main); margin-bottom: 14px;"><i class="fa-solid fa-chart-pie" style="color:var(--primary)"></i> Rating Distribution</h4>
-                <?php for($i=5; $i>=1; $i--): 
-                    $count = $rating_counts[$i];
+                <?php for($i=5; $i>=1; $i--):$count = $rating_counts[$i];
                     $pct =$total_feedbacks > 0 ? round(($count / $total_feedbacks) * 100) : 0;
                 ?>
                 <div class="bar-row">
@@ -637,7 +636,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.setAttribute('download', 'campusbite_feedbacks_fluid.csv');
+            a.setAttribute('download', 'campusbite_feedbacks_pro.csv');
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
