@@ -46,20 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
 
         $html_item = "
         <div class='feedback-item' id='feedback-item-{$new_id}' data-id='{$new_id}' data-rating='{$rating}' data-text='" . strtolower($sub_text . ' ' . $msg_text) . "'>
-            <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;'>
+            <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;'>
                 <div class='stars'>{$stars_html}</div>
                 <div style='display: flex; align-items: center; gap: 8px;'>
                     <span class='sentiment-badge {$sentiment_class}'>{$sentiment_text}</span>
-                    <button onclick='deleteFeedback({$new_id})' title='Delete Feedback' style='background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:13px; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);' onmouseover='this.style.color=\"#ef4444\"; this.style.transform=\"scale(1.2)\"' onmouseout='this.style.color=\"var(--text-sub)\"; this.style.transform=\"scale(1)\"'>
+                    <button onclick='deleteFeedback({$new_id})' title='Delete Feedback' style='background:none; border:none; color:var(--text-sub); cursor:pointer; font-size:13px; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);' onmouseover='this.style.color=\"#ef4444\"; this.style.transform=\"scale(1.25)\"' onmouseout='this.style.color=\"var(--text-sub)\"; this.style.transform=\"scale(1)\"'>
                         <i class='fa-solid fa-trash-can'></i>
                     </button>
                 </div>
             </div>
-            <div style='font-weight: 700; font-size: 14.5px; color: var(--text-main);'>{$sub_text}</div>
+            <div style='font-weight: 700; font-size: 15px; color: var(--text-main); letter-spacing: -0.2px;'>{$sub_text}</div>
             <div style='font-size: 13.5px; color: var(--text-sub); margin-top: 6px; line-height: 1.6;'>{$msg_text}</div>
-            <div style='font-size: 11.5px; color: var(--text-sub); margin-top: 10px; display: flex; justify-content: space-between; align-items: center;'>
+            <div style='font-size: 11.5px; color: var(--text-sub); margin-top: 12px; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); pt: 8px;'>
                 <span style='display: flex; align-items: center; gap: 6px;'><i class='fa-regular fa-clock'></i> {$date_formatted}</span>
-                <span style='font-size: 11px; font-weight:700; color:var(--primary); background:var(--primary-light); padding:2px 8px; border-radius:6px; animation: pulseBadge 2s infinite;'>Just Now</span>
+                <span style='font-size: 10.5px; font-weight:700; color:var(--primary); background:var(--primary-light); padding:3px 10px; border-radius:20px;'>Just Now</span>
             </div>
         </div>";
 
@@ -98,7 +98,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Feedback Hub Pro | CampusBite</title>
+    <title>Enterprise Feedback Elite | CampusBite</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -107,41 +107,43 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
             --primary-hover: #059669;
             --primary-light: #ecfdf5;
             --bg-main: #f8fafc;
-            --card-bg: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.85);
             --text-main: #0f172a;
             --text-sub: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.1), 0 10px 20px -10px rgba(0, 0, 0, 0.03);
-            --radius: 24px;
+            --shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.08), 0 10px 20px -10px rgba(0, 0, 0, 0.02);
+            --glow: 0 0 25px rgba(16, 185, 129, 0.18);
+            --radius: 22px;
         }
 
         [data-theme="dark"] {
             --bg-main: #030712;
-            --card-bg: #0f172a;
+            --card-bg: rgba(15, 23, 42, 0.75);
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --border: #1e293b;
             --primary-light: rgba(16, 185, 129, 0.15);
-            --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            --glow: 0 0 30px rgba(16, 185, 129, 0.25);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         body { display: flex; background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        /* Sidebar Glassmorphism */
-        .sidebar { width: 260px; background: var(--card-bg); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; backdrop-filter: blur(16px); animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* Glassmorphism Sidebar */
+        .sidebar { width: 260px; background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 24px 20px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 100; animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         .brand { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
-        .brand-icon { background: linear-gradient(135deg, var(--primary), #34d399); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35); animation: pulseGlow 3s infinite ease-in-out; }
-        @keyframes pulseGlow { 0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(16,185,129,0.4); } 50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(16,185,129,0.7); } }
+        .brand-icon { background: linear-gradient(135deg, var(--primary), #34d399); width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35); animation: pulseGlow 3s infinite ease-in-out; }
+        @keyframes pulseGlow { 0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(16,185,129,0.4); } 50% { transform: scale(1.06); box-shadow: 0 0 25px rgba(16,185,129,0.7); } }
 
-        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
         .nav-item a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: var(--text-sub); font-size: 14px; font-weight: 600; border-radius: 14px; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .nav-item a:hover { transform: translateX(8px); background: var(--primary-light); color: var(--primary); }
         .nav-item.active a { background: var(--primary-light); color: var(--primary); font-weight: 700; transform: translateX(4px); box-shadow: 0 4px 15px rgba(16,185,129,0.15); }
 
-        /* Main Content Fluid Animation */
+        /* Main Content Layout */
         .main-content { flex: 1; margin-left: 260px; padding: 40px 50px; overflow-y: auto; max-width: 1400px; animation: fadeInScale 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.98) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
@@ -151,14 +153,14 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
         .header-actions { display: flex; gap: 12px; align-items: center; }
-        .action-btn { background: var(--card-bg); border: 1.5px solid var(--border); padding: 11px 18px; border-radius: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13.5px; font-weight: 700; box-shadow: var(--shadow); transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .action-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 30px rgba(16,185,129,0.25); }
+        .action-btn { background: var(--card-bg); backdrop-filter: blur(10px); border: 1.5px solid var(--border); padding: 11px 18px; border-radius: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13.5px; font-weight: 700; box-shadow: var(--shadow); transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .action-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-4px) scale(1.02); box-shadow: var(--glow); }
 
-        /* Analytics Cards */
+        /* Analytics Strip */
         .analytics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
-        .analytic-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
+        .analytic-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
         .analytic-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); opacity: 0; transition: opacity 0.3s ease; }
-        .analytic-card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: 0 25px 50px -12px rgba(16,185,129,0.25); }
+        .analytic-card:hover { transform: translateY(-6px); border-color: var(--primary); box-shadow: var(--glow); }
         .analytic-card:hover::before { opacity: 1; }
         
         .analytic-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -169,23 +171,23 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         .analytic-icon.purple { background: #f3e8ff; color: #9333ea; }
 
         /* Breakdown Card */
-        .breakdown-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 28px; box-shadow: var(--shadow); display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; transition: all 0.4s ease; }
-        .breakdown-card:hover { border-color: var(--primary); box-shadow: 0 25px 50px -15px rgba(16,185,129,0.15); }
+        .breakdown-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 28px; box-shadow: var(--shadow); display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; transition: all 0.4s ease; }
+        .breakdown-card:hover { border-color: var(--primary); box-shadow: var(--glow); }
         .bar-row { display: flex; align-items: center; gap: 12px; font-size: 12.5px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; }
         .bar-track { flex: 1; height: 10px; background: var(--bg-main); border-radius: 6px; overflow: hidden; border: 1.5px solid var(--border); }
         .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #34d399); border-radius: 6px; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
 
         /* Toast Notifications */
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; }
-        .toast { padding: 14px 24px; border-radius: 16px; font-size: 13.5px; font-weight: 700; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; animation: slideInToast 0.45s cubic-bezier(0.16, 1, 0.3, 1), fadeOutToast 0.45s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; backdrop-filter: blur(10px); }
+        .toast { padding: 14px 24px; border-radius: 16px; font-size: 13.5px; font-weight: 700; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; animation: slideInToast 0.45s cubic-bezier(0.16, 1, 0.3, 1), fadeOutToast 0.45s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards; color: #fff; backdrop-filter: blur(12px); }
         .toast.success { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4); }
         .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 15px 30px rgba(239, 68, 68, 0.4); }
         @keyframes slideInToast { from { transform: translateX(120%) scale(0.9); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
         @keyframes fadeOutToast { to { opacity: 0; transform: translateY(20px) scale(0.95); } }
 
         .feedback-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 28px; align-items: start; }
-        .card { background: var(--card-bg); border-radius: var(--radius); border: 1.5px solid var(--border); padding: 32px; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 30px 60px -20px rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.3); }
+        .card { background: var(--card-bg); backdrop-filter: blur(16px); border-radius: var(--radius); border: 1.5px solid var(--border); padding: 32px; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .card:hover { transform: translateY(-3px); box-shadow: var(--glow); border-color: rgba(16,185,129,0.35); }
         
         .form-group { margin-bottom: 22px; position: relative; }
         .form-label { display: block; font-size: 12px; font-weight: 800; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -199,17 +201,17 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
 
         .char-count { position: absolute; right: 14px; bottom: 12px; font-size: 11px; color: var(--text-sub); font-weight: 700; }
 
-        /* Star Rating Animation */
+        /* Star Rating Elite Animation */
         .star-rating { display: flex; gap: 10px; font-size: 26px; cursor: pointer; flex-direction: row-reverse; justify-content: flex-end; }
         .star-rating input { display: none; }
         .star-rating label { color: var(--border); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease; }
         .star-rating label:hover { transform: scale(1.4) rotate(12deg); }
         .star-rating input:checked ~ label,
         .star-rating label:hover,
-        .star-rating label:hover ~ label { color: #f59e0b; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.5)); }
+        .star-rating label:hover ~ label { color: #f59e0b; filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.6)); }
 
         .btn-submit { background: linear-gradient(135deg, var(--primary), #059669); color: #ffffff; border: none; padding: 16px 22px; border-radius: 14px; font-weight: 800; font-size: 14.5px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4); transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
-        .btn-submit::after { content: ''; position: absolute; width: 100%; height: 100%; top: 0; left: -100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
+        .btn-submit::after { content: ''; position: absolute; width: 100%; height: 100%; top: 0; left: -100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: 0.5s; }
         .btn-submit:hover::after { left: 100%; }
         .btn-submit:hover { transform: translateY(-4px); box-shadow: 0 18px 35px rgba(16, 185, 129, 0.6); filter: brightness(1.08); }
         .btn-submit:active { transform: translateY(-1px); }
@@ -229,7 +231,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
 
         /* Item Entry Animation */
         .feedback-item { background: var(--bg-main); border: 1.5px solid var(--border); padding: 18px; border-radius: 16px; margin-bottom: 14px; animation: fadeInUpItem 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .feedback-item:hover { border-color: var(--primary); box-shadow: 0 15px 35px rgba(16,185,129,0.12); transform: translateY(-4px) scale(1.01); }
+        .feedback-item:hover { border-color: var(--primary); box-shadow: var(--glow); transform: translateY(-4px) scale(1.01); }
         .stars { color: #f59e0b; font-size: 13px; }
 
         .sentiment-badge { font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.6px; animation: fadeInScale 0.3s ease; }
@@ -261,7 +263,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
             </ul>
         </div>
         <div style="font-size: 11.5px; color: var(--text-sub); text-align: center; padding-top: 18px; border-top: 1px solid var(--border);">
-            CampusBite Fluid v15.0 Pro
+            CampusBite Elite v17.0 Pro
         </div>
     </div>
 
@@ -312,7 +314,8 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
         <div class="breakdown-card">
             <div>
                 <h4 style="font-size: 13.5px; font-weight: 800; color: var(--text-main); margin-bottom: 14px;"><i class="fa-solid fa-chart-pie" style="color:var(--primary)"></i> Rating Distribution</h4>
-                <?php for($i=5; $i>=1; $i--):$count = $rating_counts[$i];
+                <?php for($i=5; $i>=1; $i--): 
+                    $count = $rating_counts[$i];
                     $pct =$total_feedbacks > 0 ? round(($count / $total_feedbacks) * 100) : 0;
                 ?>
                 <div class="bar-row">
@@ -606,7 +609,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
             });
         }
 
-        searchInput.addEventListener('input', applyFilterAndSearch);
+                                searchInput.addEventListener('input', applyFilterAndSearch);
 
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -636,7 +639,7 @@ $satisfaction_rate = $total_feedbacks > 0 ? round((($rating_counts[5] + $rating_
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.setAttribute('download', 'campusbite_feedbacks_pro.csv');
+            a.setAttribute('download', 'campusbite_feedbacks_elite.csv');
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
