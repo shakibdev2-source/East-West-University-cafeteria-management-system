@@ -22,7 +22,7 @@ if (empty($_SESSION['csrf_token'])) {
 $user_id = (int)($_SESSION['user_id'] ?? $_SESSION['student_id'] ?? 3);
 
 function getCartPayload(mysqli $conn, int $userId): array {
-    $query = "SELECT c.cart_id, c.food_id, c.quantity, f.price, f.food_name, f.image 
+    $query = "SELECT c.cart_id, c.food_id, c.quantity, f.price, f.food_name, f.image, f.category 
               FROM cart c 
               INNER JOIN foods f ON c.food_id = f.food_id 
               WHERE c.user_id = ?";
@@ -70,8 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $discount_amount = (float)(filter_input(INPUT_POST, 'discount_amount', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) ?? 0.00);
         $tip_amount = (float)(filter_input(INPUT_POST, 'tip_amount', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) ?? 0.00);
         $order_type = trim(filter_input(INPUT_POST, 'order_type', FILTER_SANITIZE_SPECIAL_CHARS) ?? 'Dine-In');
+        $eco_cutlery = isset($_POST['eco_cutlery']) ? 'Yes (Eco-Friendly)' : 'No';
+        $priority_queue = isset($_POST['priority_queue']) ? 15.00 : 0.00;
 
-        $final_total = max(0.00, $subtotal - $discount_amount + $tip_amount);
+        $final_total = max(0.00, $subtotal - $discount_amount + $tip_amount + $priority_queue);
 
         if (empty($table_room)) {
             $error_msg = "Table number or cafeteria location assignment is required.";
@@ -79,9 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
 
             try {
-                $payment_details = $payment_method . " [" . $order_type . "]";
+                $payment_details = $payment_method . " [" . $order_type . "] | Cutlery: " . $eco_cutlery;
                 if (!empty($gateway_trx)) {
                     $payment_details .= " (TrxID: " . $gateway_trx . ")";
+                }
+                if ($priority_queue > 0) {
+                    $payment_details .= " [⚡ VIP PRIORITY KITCHEN QUEUE]";
                 }
 
                 if ($hasTableRoomCol) {
@@ -109,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $f_id = (int)$item['food_id'];
                     $qty = (int)$item['quantity'];
                     $prc = (float)$item['price'];
-                    mysqli_stmt_bind_param($item_stmt, "iiid", $order_id,$f_id, $qty,$prc);
+                    mysqli_stmt_bind_param($item_stmt, "iiid", $order_id, $f_id, $qty, $prc);
                     
                     if (!mysqli_stmt_execute($item_stmt)) {
                         throw new Exception("Line Item Insertion Error for Food ID: " . $f_id);
@@ -127,7 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
 
             } catch (Exception $e) {
-                mysqli_rollback($conn);$error_msg = "Transaction Aborted: " . $e->getMessage();
+                mysqli_rollback($conn);
+                $error_msg = "Transaction Aborted: " . $e->getMessage();
             }
         }
     }
@@ -138,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EWU Cafeteria - Advanced Secure Checkout</title>
+    <title>EWU Cafeteria - Pro Max Ultra Neural Checkout</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -149,26 +155,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: radial-gradient(circle at top left, #e6f7f0 0%, #f4f8f6 100%);
+            background: radial-gradient(circle at top left, #e6f7f0 0%, #edf7f2 50%, #f4f8f6 100%);
         }
 
         .glass-card-3d {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 150, 107, 0.12);
-            box-shadow: 0 20px 40px -10px rgba(0, 150, 107, 0.08);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(0, 150, 107, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 150, 107, 0.09);
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
         }
 
         .glass-card-3d:hover {
-            transform: translateY(-4px) rotateX(1deg) rotateY(-0.5deg);
-            box-shadow: 0 30px 60px -12px rgba(0, 150, 107, 0.18);
-            border-color: rgba(0, 150, 107, 0.3);
+            transform: translateY(-5px) rotateX(1deg) rotateY(-0.5deg);
+            box-shadow: 0 35px 70px -15px rgba(0, 150, 107, 0.2);
+            border-color: rgba(0, 150, 107, 0.35);
         }
 
         @keyframes floatEntrance {
-            0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+            0% { opacity: 0; transform: translateY(25px) scale(0.97); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
@@ -178,14 +184,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         @keyframes float3D {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-5px) rotate(3deg); }
+            50% { transform: translateY(-6px) rotate(4deg); }
         }
 
         .floating-3d-icon { animation: float3D 3s ease-in-out infinite; }
 
         @keyframes borderPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 150, 107, 0.3); }
-            50% { box-shadow: 0 0 0 8px rgba(0, 150, 107, 0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 150, 107, 0.35); }
+            50% { box-shadow: 0 0 0 10px rgba(0, 150, 107, 0); }
         }
 
         .pulse-active { animation: borderPulse 2s infinite; }
@@ -201,15 +207,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 50%;
             bottom: 0;
             z-index: 999;
-            font-size: 80px;
+            font-size: 85px;
             color: #00966b;
             animation: rocketFlying 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             pointer-events: none;
         }
 
         .bkash-backdrop {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
         }
 
         .bkash-btn {
@@ -219,6 +225,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .bkash-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 14px 35px rgba(226, 19, 110, 0.5);
+        }
+
+        .shimmer-bg {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
     </style>
 </head>
@@ -236,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div>
                     <span class="text-lg font-extrabold text-slate-900 tracking-tight block">EWU Cafeteria</span>
-                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Pro Express v5.0</span>
+                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Neural Ultra v6.0</span>
                 </div>
             </div>
 
@@ -271,9 +288,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="w-2 h-2 rounded-full bg-[#00966b] animate-ping"></span>
                         Kitchen Traffic
                     </span>
-                    <span class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">OPTIMAL</span>
+                    <span id="trafficBadge" class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">PEAK LOAD</span>
                 </div>
-                <p class="text-[11px] text-slate-600 font-medium">Est. Prep Time: <strong id="prepTimer" class="text-slate-900 font-bold">12:00 Mins</strong></p>
+                <p class="text-[11px] text-slate-600 font-medium">Est. Prep Time: <strong id="prepTimer" class="text-slate-900 font-bold">14:00 Mins</strong></p>
             </div>
 
             <a href="logout.php" class="flex items-center gap-3 px-4 py-3 font-bold text-rose-500 hover:bg-rose-50 rounded-2xl transition-all text-sm">
@@ -291,6 +308,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span><?= htmlspecialchars($error_msg); ?></span>
             </div>
         <?php endif; ?>
+
+        <!-- Split Banner / Notification Bar -->
+        <div class="mb-8 p-5 bg-gradient-to-r from-[#00966b] to-teal-700 text-white rounded-3xl shadow-xl flex items-center justify-between anim-slide-1 relative overflow-hidden">
+            <div class="shimmer-bg absolute inset-0 pointer-events-none"></div>
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white text-xl">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-extrabold tracking-tight">Express Neural Checkout Active</h2>
+                    <p class="text-xs text-white/80 font-medium">Unlock VIP priority queuing, eco-packaging, and automated student discounts instantly.</p>
+                </div>
+            </div>
+            <button type="button" onclick="openDietaryModal()" class="px-4 py-2.5 bg-white text-[#00966b] font-extrabold rounded-xl text-xs hover:bg-emerald-50 transition-all shadow-md relative z-10 flex items-center gap-2">
+                <i class="fa-solid fa-seedling"></i> Dietary Guard
+            </button>
+        </div>
 
         <form method="POST" action="checkout.php" id="checkoutForm">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
@@ -324,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <span class="w-9 h-9 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
                                     <i class="fa-solid fa-location-dot"></i>
                                 </span> 
-                                Delivery Destination
+                                Delivery Destination & Customizations
                             </h2>
                             <button type="button" onclick="openMapModal()" class="px-3.5 py-1.5 bg-[#e6f7f2] text-[#00966b] font-extrabold text-xs rounded-xl hover:bg-[#00966b] hover:text-white transition-all flex items-center gap-1.5">
                                 <i class="fa-solid fa-map-location-dot"></i> Interactive Map
@@ -341,6 +375,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">SPECIAL INSTRUCTIONS (OPTIONAL)</label>
                                 <input type="text" name="instructions" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-semibold outline-none focus:border-[#00966b] focus:bg-white focus:ring-4 focus:ring-[#00966b]/10 transition-all text-slate-800 placeholder-slate-400" placeholder="e.g. Extra napkins, less spicy please">
                             </div>
+
+                            <div class="grid grid-cols-2 gap-4 pt-2">
+                                <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all">
+                                    <input type="checkbox" name="eco_cutlery" value="1" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
+                                    <div>
+                                        <span class="font-extrabold text-slate-800 text-xs block">🌱 Eco-Friendly Cutlery</span>
+                                        <span class="text-[10px] text-slate-500">Biodegradable bamboo forks & spoons</span>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="togglePriorityQueue(this)">
+                                    <input type="checkbox" name="priority_queue" id="priorityCheckbox" value="1" onchange="recalculateTotal()" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
+                                    <div>
+                                        <span class="font-extrabold text-slate-800 text-xs block">⚡ VIP Priority Kitchen (+৳15)</span>
+                                        <span class="text-[10px] text-slate-500">Skip regular wait list & cook first</span>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -349,39 +401,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="w-9 h-9 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
                                 <i class="fa-solid fa-wallet"></i>
                             </span> 
-                            Payment Options
+                            Secure Payment Options
                         </h2>
 
-                        <div class="space-y-4">
-                            <div id="optCash" onclick="selectPaymentMethod('Cash / Counter Payment')" class="border-2 border-[#00966b] bg-[#e6f7f2]/80 rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-300 pulse-active">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
-                                        <i class="fa-solid fa-money-bill-wave text-xl"></i>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div id="optCash" onclick="selectPaymentMethod('Cash / Counter Payment')" class="border-2 border-[#00966b] bg-[#e6f7f2]/80 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="w-10 h-10 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
+                                        <i class="fa-solid fa-money-bill-wave text-base"></i>
                                     </div>
-                                    <div>
-                                        <p class="font-extrabold text-slate-900 text-sm">Cash / Counter Payment</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">Pay physical cash at counter or upon delivery</p>
-                                    </div>
+                                    <span id="cashCheck" class="w-5 h-5 rounded-full bg-[#00966b] text-white flex items-center justify-center text-[10px]">
+                                        <i class="fa-solid fa-check"></i>
+                                    </span>
                                 </div>
-                                <span id="cashCheck" class="w-6 h-6 rounded-full bg-[#00966b] text-white flex items-center justify-center text-xs">
-                                    <i class="fa-solid fa-check"></i>
-                                </span>
+                                <div>
+                                    <p class="font-extrabold text-slate-900 text-xs">Cash / Counter</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Pay physically</p>
+                                </div>
                             </div>
 
-                            <div id="optBkash" onclick="selectPaymentMethod('bKash Online Payment')" class="border-2 border-slate-100 bg-white rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-300 hover:border-[#e2136e]">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-[#e2136e]/10 flex items-center justify-center text-[#e2136e]">
-                                        <i class="fa-solid fa-mobile-screen-button text-xl"></i>
+                            <div id="optBkash" onclick="selectPaymentMethod('bKash Online Payment')" class="border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:border-[#e2136e]">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="w-10 h-10 rounded-xl bg-[#e2136e]/10 flex items-center justify-center text-[#e2136e]">
+                                        <i class="fa-solid fa-mobile-screen-button text-base"></i>
                                     </div>
-                                    <div>
-                                        <p class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-                                            <span>bKash Automated Gateway</span>
-                                            <span class="text-[9px] bg-[#e2136e] text-white px-2 py-0.5 rounded-full font-bold">INSTANT</span>
-                                        </p>
-                                        <p class="text-xs text-slate-500 mt-0.5">Pay online securely via bKash mobile account</p>
-                                    </div>
+                                    <span id="bkashCheck" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"></span>
                                 </div>
-                                <span id="bkashCheck" class="w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs"></span>
+                                <div>
+                                    <p class="font-extrabold text-slate-900 text-xs flex items-center gap-1">
+                                        <span>bKash Instant</span>
+                                    </p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Automated Gateway</p>
+                                </div>
+                            </div>
+
+                            <div id="optCard" onclick="selectPaymentMethod('Campus Smart Card')" class="border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:border-blue-500">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
+                                        <i class="fa-solid fa-id-card text-base"></i>
+                                    </div>
+                                    <span id="cardCheck" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"></span>
+                                </div>
+                                <div>
+                                    <p class="font-extrabold text-slate-900 text-xs">EWU Smart Card</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Direct ID debit</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -441,6 +505,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span>+৳<span id="displayTip">0.00</span></span>
                         </div>
 
+                        <div id="priorityRow" class="flex justify-between text-sm text-purple-600 font-bold hidden">
+                            <span>VIP Priority Queue</span>
+                            <span>+৳15.00</span>
+                        </div>
+
                         <div class="flex justify-between text-xl font-black text-slate-900 border-t border-slate-100 pt-3">
                             <span>Total Payable</span>
                             <span class="text-[#00966b]">৳<span id="displayTotal"><?= number_format($subtotal, 2) ?></span></span>
@@ -457,6 +526,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </main>
 
+    <!-- Map Modal -->
     <div id="mapModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
         <div class="bg-white w-full max-w-xl rounded-3xl p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
@@ -493,6 +563,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <!-- Dietary Guard Modal -->
+    <div id="dietaryModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-seedling text-[#00966b]"></i> Dietary & Allergen Guard
+                </h3>
+                <button type="button" onclick="closeDietaryModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500 mb-4">Neural analysis of your current cart items:</p>
+
+            <div class="space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span>🥜 Peanut / Nut Traces</span>
+                    <span class="text-emerald-600 font-black">CLEAN</span>
+                </div>
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span>🥛 Lactose / Dairy Content</span>
+                    <span class="text-amber-600 font-black">MODERATE</span>
+                </div>
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span>🌾 Gluten Profile</span>
+                    <span class="text-emerald-600 font-black">STANDARD</span>
+                </div>
+            </div>
+
+            <button type="button" onclick="closeDietaryModal()" class="w-full py-3 bg-[#00966b] text-white font-extrabold rounded-2xl text-xs hover:bg-[#007d59] transition-all">Acknowledge & Close</button>
+        </div>
+    </div>
+
+    <!-- bKash Gateway Modal -->
     <div id="bkashGatewayModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-pink-100">
             
@@ -560,6 +664,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <!-- Smart Card Modal -->
+    <div id="cardModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white text-center relative">
+                <button type="button" onclick="closeCardModal()" class="absolute right-5 top-5 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="w-14 h-14 bg-white text-blue-600 rounded-2xl flex items-center justify-center font-black text-2xl mx-auto mb-2 shadow-lg">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <h3 class="text-lg font-extrabold">EWU Smart Card Debit</h3>
+                <p class="text-xs text-white/80 font-medium">Instant Campus ID Verification</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Student ID / Smart Card Number</label>
+                    <input type="text" id="smartCardInput" placeholder="202X-X-XX-XXX" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center font-extrabold text-base text-slate-800 outline-none focus:border-blue-600 transition-all">
+                </div>
+                <button type="button" onclick="processSmartCardPayment()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl transition-all text-sm shadow-lg shadow-blue-500/25">Authorize & Place Order</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const rawSubtotal = <?= (float)$subtotal ?>;
         let appliedDiscount = 0.00;
@@ -573,7 +700,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(550, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(580, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.06);
             osc.connect(gain);
@@ -582,7 +709,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             osc.stop(audioCtx.currentTime + 0.06);
         }
 
-        let totalSeconds = 720;
+        let totalSeconds = 840;
         setInterval(() => {
             if(totalSeconds > 0) {
                 totalSeconds--;
@@ -607,6 +734,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             playClickSound();
             document.getElementById('tableRoomInput').value = zoneName;
             closeMapModal();
+        }
+
+        function openDietaryModal() {
+            playClickSound();
+            document.getElementById('dietaryModal').classList.remove('hidden');
+            document.getElementById('dietaryModal').classList.add('flex');
+        }
+
+        function closeDietaryModal() {
+            document.getElementById('dietaryModal').classList.add('hidden');
+            document.getElementById('dietaryModal').classList.remove('flex');
         }
 
         function toggleOrderType(type) {
@@ -657,7 +795,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 msgEl.innerText = "✓ Voucher Applied! 10% Student Discount.";
                 msgEl.classList.remove('hidden');
 
-                confetti({ particleCount: 70, spread: 60, origin: { y: 0.8 } });
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.8 } });
             } else {
                 msgEl.className = "text-[11px] font-bold mt-1.5 text-rose-500";
                 msgEl.innerText = "✕ Invalid coupon code. Try 'EWU10'";
@@ -667,9 +805,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         function recalculateTotal() {
-            const finalVal = Math.max(0, rawSubtotal - appliedDiscount + currentTip).toFixed(2);
+            const isPriority = document.getElementById('priorityCheckbox').checked;
+            const priorityCost = isPriority ? 15.00 : 0.00;
+            
+            const priorityRow = document.getElementById('priorityRow');
+            if (isPriority) {
+                priorityRow.classList.remove('hidden');
+            } else {
+                priorityRow.classList.add('hidden');
+            }
+
+            const finalVal = Math.max(0, rawSubtotal - appliedDiscount + currentTip + priorityCost).toFixed(2);
             document.getElementById('displayTotal').innerText = finalVal;
             document.getElementById('bkashModalAmount').innerText = finalVal;
+        }
+
+        function togglePriorityQueue(el) {
+            playClickSound();
+            const checkbox = document.getElementById('priorityCheckbox');
+            if(event.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+            recalculateTotal();
         }
 
         function selectPaymentMethod(method) {
@@ -679,27 +836,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             const optCash = document.getElementById('optCash');
             const optBkash = document.getElementById('optBkash');
+            const optCard = document.getElementById('optCard');
+            
             const cashCheck = document.getElementById('cashCheck');
             const bkashCheck = document.getElementById('bkashCheck');
+            const cardCheck = document.getElementById('cardCheck');
+
+            optCash.className = "border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300";
+            optBkash.className = "border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300";
+            optCard.className = "border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300";
+
+            cashCheck.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"; cashCheck.innerHTML = '';
+            bkashCheck.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"; bkashCheck.innerHTML = '';
+            cardCheck.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"; cardCheck.innerHTML = '';
 
             if (method === 'Cash / Counter Payment') {
-                optCash.className = "border-2 border-[#00966b] bg-[#e6f7f2]/80 rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-300 pulse-active";
-                optBkash.className = "border-2 border-slate-100 bg-white rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-300 hover:border-[#e2136e]";
-                
-                cashCheck.className = "w-6 h-6 rounded-full bg-[#00966b] text-white flex items-center justify-center text-xs";
+                optCash.className = "border-2 border-[#00966b] bg-[#e6f7f2]/80 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active";
+                cashCheck.className = "w-5 h-5 rounded-full bg-[#00966b] text-white flex items-center justify-center text-[10px]";
                 cashCheck.innerHTML = '<i class="fa-solid fa-check"></i>';
-                
-                bkashCheck.className = "w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs";
-                bkashCheck.innerHTML = '';
-            } else {
-                optBkash.className = "border-2 border-[#e2136e] bg-[#e2136e]/5 rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-300 pulse-active";
-                optCash.className = "border-2 border-slate-100 bg-white rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-all duration-300 hover:border-[#00966b]";
-
-                bkashCheck.className = "w-6 h-6 rounded-full bg-[#e2136e] text-white flex items-center justify-center text-xs";
+            } else if (method === 'bKash Online Payment') {
+                optBkash.className = "border-2 border-[#e2136e] bg-[#e2136e]/5 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active";
+                bkashCheck.className = "w-5 h-5 rounded-full bg-[#e2136e] text-white flex items-center justify-center text-[10px]";
                 bkashCheck.innerHTML = '<i class="fa-solid fa-check"></i>';
-
-                cashCheck.className = "w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs";
-                cashCheck.innerHTML = '';
+            } else {
+                optCard.className = "border-2 border-blue-600 bg-blue-50/50 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active";
+                cardCheck.className = "w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px]";
+                cardCheck.innerHTML = '<i class="fa-solid fa-check"></i>';
             }
         }
 
@@ -708,8 +870,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             rocketBox.classList.remove('hidden');
 
             confetti({
-                particleCount: 150,
-                spread: 100,
+                particleCount: 160,
+                spread: 110,
                 origin: { y: 0.6 }
             });
 
@@ -751,8 +913,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         });
                     }
                 });
-            } else {
+            } else if (currentPayment === 'bKash Online Payment') {
                 openBkashGateway();
+            } else {
+                openCardModal();
             }
         }
 
@@ -768,6 +932,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function closeBkashGateway() {
             document.getElementById('bkashGatewayModal').classList.add('hidden');
             document.getElementById('bkashGatewayModal').classList.remove('flex');
+        }
+
+        function openCardModal() {
+            document.getElementById('cardModal').classList.remove('hidden');
+            document.getElementById('cardModal').classList.add('flex');
+        }
+
+        function closeCardModal() {
+            document.getElementById('cardModal').classList.add('hidden');
+            document.getElementById('cardModal').classList.remove('flex');
         }
 
         function goToBkashStepOTP() {
@@ -824,6 +998,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     document.getElementById('checkoutForm').submit();
                 });
             }, 1200);
+        }
+
+        function processSmartCardPayment() {
+            playClickSound();
+            const cardId = document.getElementById('smartCardInput').value.trim();
+            if(!cardId) {
+                alert('Please enter your EWU Smart Card ID.');
+                return;
+            }
+            const mockTrx = 'CARD-' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('gatewayTrxInput').value = mockTrx;
+            closeCardModal();
+
+            triggerRocketAnimation(() => {
+                document.getElementById('checkoutForm').submit();
+            });
         }
     </script>
 </body>
