@@ -13,6 +13,8 @@ if (!$conn) {
     die("Database Connection Error: " . mysqli_connect_error());
 }
 
+mysqli_set_charset($conn, "utf8mb4");
+
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -59,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $posted_token = $_POST['csrf_token'] ?? '';
     
     if (!hash_equals($_SESSION['csrf_token'], $posted_token)) {
-        $error_msg = "Security Validation Failed. Please try again.";
+        $error_msg = "Security Validation Failed (CSRF Mismatch). Please try again.";
     } else {
         $table_room = trim(filter_input(INPUT_POST, 'table_room', FILTER_SANITIZE_SPECIAL_CHARS) ?? '');
         $instructions = trim(filter_input(INPUT_POST, 'instructions', FILTER_SANITIZE_SPECIAL_CHARS) ?? '');
@@ -72,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $final_total = max(0.00, $subtotal - $discount_amount + $tip_amount);
 
         if (empty($table_room)) {
-            $error_msg = "Table or Location assignment is required.";
+            $error_msg = "Table number or cafeteria location assignment is required.";
         } else {
             mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
 
@@ -107,10 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $f_id = (int)$item['food_id'];
                     $qty = (int)$item['quantity'];
                     $prc = (float)$item['price'];
-                    mysqli_stmt_bind_param($item_stmt, "iiid", $order_id, $f_id, $qty, $prc);
+                    mysqli_stmt_bind_param($item_stmt, "iiid", $order_id,$f_id, $qty,$prc);
                     
                     if (!mysqli_stmt_execute($item_stmt)) {
-                        throw new Exception("Line Item Insertion Error.");
+                        throw new Exception("Line Item Insertion Error for Food ID: " . $f_id);
                     }
                 }
 
@@ -125,20 +127,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
 
             } catch (Exception $e) {
-                mysqli_rollback($conn);
-                $error_msg = $e->getMessage();
+                mysqli_rollback($conn);$error_msg = "Transaction Aborted: " . $e->getMessage();
             }
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-[#f0fdf4]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EWU Cafeteria - Design by Shakib</title>
+    <title>EWU Cafeteria - Advanced Secure Checkout</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -162,13 +162,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .glass-card-3d:hover {
-            transform: translateY(-6px) rotateX(2deg) rotateY(-1deg);
+            transform: translateY(-4px) rotateX(1deg) rotateY(-0.5deg);
             box-shadow: 0 30px 60px -12px rgba(0, 150, 107, 0.18);
             border-color: rgba(0, 150, 107, 0.3);
         }
 
         @keyframes floatEntrance {
-            0% { opacity: 0; transform: translateY(30px) scale(0.97); }
+            0% { opacity: 0; transform: translateY(20px) scale(0.98); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
@@ -178,14 +178,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         @keyframes float3D {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-6px) rotate(4deg); }
+            50% { transform: translateY(-5px) rotate(3deg); }
         }
 
         .floating-3d-icon { animation: float3D 3s ease-in-out infinite; }
 
         @keyframes borderPulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(0, 150, 107, 0.3); }
-            50% { box-shadow: 0 0 0 10px rgba(0, 150, 107, 0); }
+            50% { box-shadow: 0 0 0 8px rgba(0, 150, 107, 0); }
         }
 
         .pulse-active { animation: borderPulse 2s infinite; }
@@ -201,15 +201,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 50%;
             bottom: 0;
             z-index: 999;
-            font-size: 90px;
+            font-size: 80px;
             color: #00966b;
-            animation: rocketFlying 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: rocketFlying 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             pointer-events: none;
         }
 
         .bkash-backdrop {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(10px);
         }
 
         .bkash-btn {
@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div>
                     <span class="text-lg font-extrabold text-slate-900 tracking-tight block">EWU Cafeteria</span>
-                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Pro Express v4.0</span>
+                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Pro Express v5.0</span>
                 </div>
             </div>
 
@@ -271,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="w-2 h-2 rounded-full bg-[#00966b] animate-ping"></span>
                         Kitchen Traffic
                     </span>
-                    <span class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">LIGHT</span>
+                    <span class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">OPTIMAL</span>
                 </div>
                 <p class="text-[11px] text-slate-600 font-medium">Est. Prep Time: <strong id="prepTimer" class="text-slate-900 font-bold">12:00 Mins</strong></p>
             </div>
@@ -324,17 +324,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <span class="w-9 h-9 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
                                     <i class="fa-solid fa-location-dot"></i>
                                 </span> 
-                                Delivery Location
+                                Delivery Destination
                             </h2>
                             <button type="button" onclick="openMapModal()" class="px-3.5 py-1.5 bg-[#e6f7f2] text-[#00966b] font-extrabold text-xs rounded-xl hover:bg-[#00966b] hover:text-white transition-all flex items-center gap-1.5">
-                                <i class="fa-solid fa-[#00966b] fa-map"></i> Choose From Map
+                                <i class="fa-solid fa-map-location-dot"></i> Interactive Map
                             </button>
                         </div>
                         
                         <div class="space-y-5">
                             <div>
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">TABLE NUMBER / CAFETERIA ROOM *</label>
-                                <input type="text" name="table_room" id="tableRoomInput" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-semibold outline-none focus:border-[#00966b] focus:bg-white focus:ring-4 focus:ring-[#00966b]/10 transition-all text-slate-800 placeholder-slate-400" placeholder="e.g. Table 5 or Faculty Lounge" required>
+                                <input type="text" name="table_room" id="tableRoomInput" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-semibold outline-none focus:border-[#00966b] focus:bg-white focus:ring-4 focus:ring-[#00966b]/10 transition-all text-slate-800 placeholder-slate-400" placeholder="e.g. Table 05 or Faculty Lounge" required>
                             </div>
 
                             <div>
@@ -349,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="w-9 h-9 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
                                 <i class="fa-solid fa-wallet"></i>
                             </span> 
-                            Payment Method
+                            Payment Options
                         </h2>
 
                         <div class="space-y-4">
@@ -360,7 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                     <div>
                                         <p class="font-extrabold text-slate-900 text-sm">Cash / Counter Payment</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">Pay cash at counter or delivery</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">Pay physical cash at counter or upon delivery</p>
                                     </div>
                                 </div>
                                 <span id="cashCheck" class="w-6 h-6 rounded-full bg-[#00966b] text-white flex items-center justify-center text-xs">
@@ -378,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <span>bKash Automated Gateway</span>
                                             <span class="text-[9px] bg-[#e2136e] text-white px-2 py-0.5 rounded-full font-bold">INSTANT</span>
                                         </p>
-                                        <p class="text-xs text-slate-500 mt-0.5">Pay online using bKash account</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">Pay online securely via bKash mobile account</p>
                                     </div>
                                 </div>
                                 <span id="bkashCheck" class="w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs"></span>
@@ -395,7 +395,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </h2>
                     
                     <div class="space-y-3 mb-6 max-h-48 overflow-y-auto pr-1">
-                        <?php foreach ($cart_items as $item): ?>
+                        <?php foreach ($cart_items as$item): ?>
                         <div class="flex items-center justify-between text-sm py-2 border-b border-slate-100">
                             <div class="flex items-center gap-2.5">
                                 <span class="font-extrabold text-[#00966b]"><?= $item['quantity'] ?>x</span>
@@ -468,7 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
             </div>
 
-            <p class="text-xs text-slate-500 mb-4">Click any designated zone or table below to set your order destination.</p>
+            <p class="text-xs text-slate-500 mb-4">Click any designated zone or table below to set your exact order destination.</p>
 
             <div class="grid grid-cols-3 gap-3">
                 <button type="button" onclick="selectMapZone('Main Hall - Table 01')" class="p-4 border-2 border-emerald-200 bg-emerald-50/50 hover:bg-[#00966b] hover:text-white rounded-2xl font-bold text-xs transition-all text-slate-700">
@@ -486,7 +486,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="button" onclick="selectMapZone('Library Zone - Booth 3')" class="p-4 border-2 border-blue-200 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-2xl font-bold text-xs transition-all text-slate-700">
                     Library Booth 3
                 </button>
-                <button type="button" onclick="selectMapZone('Outdoor Counter')" class="p-4 border-2 border-amber-200 bg-amber-50 hover:bg-amber-600 hover:text-white rounded-2xl font-bold text-xs transition-all text-slate-700">
+                <button type="button" onclick="selectMapZone('Outdoor Counter Pickup')" class="p-4 border-2 border-amber-200 bg-amber-50 hover:bg-amber-600 hover:text-white rounded-2xl font-bold text-xs transition-all text-slate-700">
                     Outdoor Counter
                 </button>
             </div>
@@ -516,13 +516,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div id="bkashStep1" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">bKash Mobile Account</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">bKash Mobile Account Number</label>
                         <input type="text" id="bkashPhoneInput" maxlength="11" placeholder="01XXXXXXXXX" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center font-extrabold text-lg text-slate-800 outline-none focus:border-[#e2136e] transition-all tracking-wider">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button type="button" onclick="closeBkashGateway()" class="py-3.5 bg-slate-100 hover:bg-slate-200 font-bold text-slate-600 rounded-2xl transition-all text-sm">Cancel</button>
-                        <button type="button" onclick="goToBkashStepOTP()" class="py-3.5 bkash-btn text-white font-extrabold rounded-2xl transition-all text-sm">Get Verification OTP</button>
+                        <button type="button" onclick="goToBkashStepOTP()" class="py-3.5 bkash-btn text-white font-extrabold rounded-2xl transition-all text-sm">Get OTP</button>
                     </div>
                 </div>
 
@@ -530,7 +530,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Verification Code (OTP)</label>
                         <input type="text" id="bkashOtpInput" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center font-black text-2xl text-slate-800 outline-none focus:border-[#e2136e] transition-all tracking-widest">
-                        <p class="text-[11px] text-slate-400 text-center mt-2">Use Sandbox Demo OTP: <strong class="text-[#e2136e]">123456</strong></p>
+                        <p class="text-[11px] text-slate-400 text-center mt-2">Demo Sandbox OTP: <strong class="text-[#e2136e]">123456</strong></p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 pt-2">
@@ -547,13 +547,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button type="button" onclick="backToBkashStepOTP()" class="py-3.5 bg-slate-100 hover:bg-slate-200 font-bold text-slate-600 rounded-2xl transition-all text-sm">Back</button>
-                        <button type="button" onclick="processFinalBkashPayment()" class="py-3.5 bkash-btn text-white font-extrabold rounded-2xl transition-all text-sm">Complete Payment</button>
+                        <button type="button" onclick="processFinalBkashPayment()" class="py-3.5 bkash-btn text-white font-extrabold rounded-2xl transition-all text-sm">Pay Now</button>
                     </div>
                 </div>
 
                 <div id="bkashLoader" class="py-8 text-center space-y-4 hidden">
                     <div class="w-12 h-12 border-4 border-[#e2136e] border-t-transparent rounded-full animate-spin mx-auto"></div>
-                    <p class="font-extrabold text-slate-800 text-sm">Processing Secure Payment...</p>
+                    <p class="font-extrabold text-slate-800 text-sm">Validating Secure bKash Transfer...</p>
                 </div>
 
             </div>
@@ -573,13 +573,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.08);
+            osc.frequency.setValueAtTime(550, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.06);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.08);
+            osc.stop(audioCtx.currentTime + 0.06);
         }
 
         let totalSeconds = 720;
@@ -708,8 +708,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             rocketBox.classList.remove('hidden');
 
             confetti({
-                particleCount: 140,
-                spread: 90,
+                particleCount: 150,
+                spread: 100,
                 origin: { y: 0.6 }
             });
 
@@ -725,8 +725,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!tableRoom) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Location Missing',
-                    text: 'Please input or choose your Table Number / Room.',
+                    title: 'Destination Missing',
+                    text: 'Please input or choose your Table Number / Room from the map.',
                     confirmButtonColor: '#00966b',
                     customClass: { popup: 'rounded-3xl' }
                 });
@@ -736,13 +736,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (currentPayment === 'Cash / Counter Payment') {
                 Swal.fire({
-                    title: 'Confirm Order?',
-                    text: "Your order will be sent directly to the kitchen queue.",
+                    title: 'Confirm Order Submission?',
+                    text: "Your order will be transmitted directly to the kitchen queue.",
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#00966b',
                     cancelButtonColor: '#94a3b8',
-                    confirmButtonText: 'Yes, Submit Order',
+                    confirmButtonText: 'Yes, Place Order',
                     customClass: { popup: 'rounded-3xl' }
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -791,7 +791,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             playClickSound();
             const otp = document.getElementById('bkashOtpInput').value.trim();
             if (otp.length < 6) {
-                alert('Please enter a valid 6-digit OTP.');
+                alert('Please enter a valid 6-digit OTP code.');
                 return;
             }
             document.getElementById('bkashStepOTP').classList.add('hidden');
@@ -808,7 +808,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             playClickSound();
             const pin = document.getElementById('bkashPinInput').value.trim();
             if (pin.length < 5) {
-                alert('Please enter a valid 5-digit PIN.');
+                alert('Please enter a valid 5-digit PIN code.');
                 return;
             }
 
@@ -816,7 +816,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('bkashLoader').classList.remove('hidden');
 
             setTimeout(() => {
-                const mockTrx = 'BK' + Math.floor(10000000 + Math.random() * 90000000);
+                const mockTrx = 'BKX' + Math.floor(10000000 + Math.random() * 90000000);
                 document.getElementById('gatewayTrxInput').value = mockTrx;
                 closeBkashGateway();
                 
