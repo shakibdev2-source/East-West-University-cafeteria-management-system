@@ -72,8 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $order_type = trim(filter_input(INPUT_POST, 'order_type', FILTER_SANITIZE_SPECIAL_CHARS) ?? 'Dine-In');
         $eco_cutlery = isset($_POST['eco_cutlery']) ? 'Yes (Eco-Friendly)' : 'No';
         $priority_queue = isset($_POST['priority_queue']) ? 15.00 : 0.00;
+        $carbon_offset = isset($_POST['carbon_offset']) ? 5.00 : 0.00;
+        $scheduled_time = trim(filter_input(INPUT_POST, 'scheduled_time', FILTER_SANITIZE_SPECIAL_CHARS) ?? 'ASAP (Immediate)');
 
-        $final_total = max(0.00, $subtotal - $discount_amount + $tip_amount + $priority_queue);
+        $final_total = max(0.00, $subtotal - $discount_amount + $tip_amount + $priority_queue + $carbon_offset);
 
         if (empty($table_room)) {
             $error_msg = "Table number or cafeteria location assignment is required.";
@@ -81,12 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_begin_transaction($conn, MYSQLI_TRANS_START_READ_WRITE);
 
             try {
-                $payment_details = $payment_method . " [" . $order_type . "] | Cutlery: " . $eco_cutlery;
+                $payment_details = $payment_method . " [" . $order_type . "] | Schedule: " . $scheduled_time . " | Cutlery: " . $eco_cutlery;
                 if (!empty($gateway_trx)) {
                     $payment_details .= " (TrxID: " . $gateway_trx . ")";
                 }
                 if ($priority_queue > 0) {
                     $payment_details .= " [⚡ VIP PRIORITY KITCHEN QUEUE]";
+                }
+                if ($carbon_offset > 0) {
+                    $payment_details .= " [🌳 Carbon Offset Planted]";
                 }
 
                 if ($hasTableRoomCol) {
@@ -144,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EWU Cafeteria - Pro Max Ultra Neural Checkout</title>
+    <title>EWU Cafeteria - Quantum Neural Ultra v7.0</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -253,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div>
                     <span class="text-lg font-extrabold text-slate-900 tracking-tight block">EWU Cafeteria</span>
-                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Neural Ultra v6.0</span>
+                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Quantum v7.0</span>
                 </div>
             </div>
 
@@ -288,9 +293,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="w-2 h-2 rounded-full bg-[#00966b] animate-ping"></span>
                         Kitchen Traffic
                     </span>
-                    <span id="trafficBadge" class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">PEAK LOAD</span>
+                    <span id="trafficBadge" class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">OPTIMAL</span>
                 </div>
-                <p class="text-[11px] text-slate-600 font-medium">Est. Prep Time: <strong id="prepTimer" class="text-slate-900 font-bold">14:00 Mins</strong></p>
+                <p class="text-[11px] text-slate-600 font-medium">Est. Prep Time: <strong id="prepTimer" class="text-slate-900 font-bold">12:00 Mins</strong></p>
             </div>
 
             <a href="logout.php" class="flex items-center gap-3 px-4 py-3 font-bold text-rose-500 hover:bg-rose-50 rounded-2xl transition-all text-sm">
@@ -309,21 +314,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <!-- Split Banner / Notification Bar -->
         <div class="mb-8 p-5 bg-gradient-to-r from-[#00966b] to-teal-700 text-white rounded-3xl shadow-xl flex items-center justify-between anim-slide-1 relative overflow-hidden">
             <div class="shimmer-bg absolute inset-0 pointer-events-none"></div>
             <div class="flex items-center gap-4 relative z-10">
                 <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white text-xl">
-                    <i class="fa-solid fa-bolt"></i>
+                    <i class="fa-solid fa-atom"></i>
                 </div>
                 <div>
-                    <h2 class="text-base font-extrabold tracking-tight">Express Neural Checkout Active</h2>
-                    <p class="text-xs text-white/80 font-medium">Unlock VIP priority queuing, eco-packaging, and automated student discounts instantly.</p>
+                    <h2 class="text-base font-extrabold tracking-tight">Quantum Neural Checkout Engine</h2>
+                    <p class="text-xs text-white/80 font-medium">Equipped with AI calorie estimator, live kitchen scheduling, eco-offset planting, and biometric security.</p>
                 </div>
             </div>
-            <button type="button" onclick="openDietaryModal()" class="px-4 py-2.5 bg-white text-[#00966b] font-extrabold rounded-xl text-xs hover:bg-emerald-50 transition-all shadow-md relative z-10 flex items-center gap-2">
-                <i class="fa-solid fa-seedling"></i> Dietary Guard
-            </button>
+            <div class="flex gap-2 relative z-10">
+                <button type="button" onclick="openDietaryModal()" class="px-4 py-2.5 bg-white text-[#00966b] font-extrabold rounded-xl text-xs hover:bg-emerald-50 transition-all shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-seedling"></i> Dietary Guard
+                </button>
+                <button type="button" onclick="openNutritionModal()" class="px-4 py-2.5 bg-emerald-800 text-white font-extrabold rounded-xl text-xs hover:bg-emerald-900 transition-all shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-fire"></i> Nutrition Facts
+                </button>
+            </div>
         </div>
 
         <form method="POST" action="checkout.php" id="checkoutForm">
@@ -333,14 +342,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="hidden" name="discount_amount" id="discountAmountInput" value="0.00">
             <input type="hidden" name="tip_amount" id="tipAmountInput" value="0.00">
             <input type="hidden" name="order_type" id="orderTypeInput" value="Dine-In">
+            <input type="hidden" name="scheduled_time" id="scheduledTimeInput" value="ASAP (Immediate)">
 
             <div class="grid grid-cols-12 gap-8 items-start">
                 
                 <div class="col-span-8 space-y-8">
                     
                     <div class="glass-card-3d rounded-3xl p-6 anim-slide-1">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Select Service Type</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Select Service Type & Schedule</span>
                             <div class="flex gap-2 bg-slate-100 p-1.5 rounded-2xl">
                                 <button type="button" id="btnDineIn" onclick="toggleOrderType('Dine-In')" class="px-5 py-2 rounded-xl text-xs font-extrabold bg-[#00966b] text-white shadow-md transition-all">
                                     <i class="fa-solid fa-chair mr-1.5"></i> Dine-In
@@ -350,6 +360,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </button>
                             </div>
                         </div>
+
+                        <div class="grid grid-cols-3 gap-3 pt-2">
+                            <button type="button" onclick="selectScheduleTime('ASAP (Immediate)', this)" class="schedule-btn p-3 rounded-2xl border-2 border-[#00966b] bg-[#e6f7f2] text-xs font-extrabold text-slate-800 transition-all text-center">
+                                ⚡ ASAP (12m)
+                            </button>
+                            <button type="button" onclick="selectScheduleTime('Lunch Rush - 1:00 PM', this)" class="schedule-btn p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-extrabold text-slate-600 transition-all text-center">
+                                🕒 Lunch 1:00 PM
+                            </button>
+                            <button type="button" onclick="selectScheduleTime('Evening Snack - 4:30 PM', this)" class="schedule-btn p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-extrabold text-slate-600 transition-all text-center">
+                                🌅 Snack 4:30 PM
+                            </button>
+                        </div>
                     </div>
 
                     <div class="glass-card-3d rounded-3xl p-8 anim-slide-1">
@@ -358,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <span class="w-9 h-9 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
                                     <i class="fa-solid fa-location-dot"></i>
                                 </span> 
-                                Delivery Destination & Customizations
+                                Delivery Destination & Quantum Add-ons
                             </h2>
                             <button type="button" onclick="openMapModal()" class="px-3.5 py-1.5 bg-[#e6f7f2] text-[#00966b] font-extrabold text-xs rounded-xl hover:bg-[#00966b] hover:text-white transition-all flex items-center gap-1.5">
                                 <i class="fa-solid fa-map-location-dot"></i> Interactive Map
@@ -376,20 +398,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="text" name="instructions" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-semibold outline-none focus:border-[#00966b] focus:bg-white focus:ring-4 focus:ring-[#00966b]/10 transition-all text-slate-800 placeholder-slate-400" placeholder="e.g. Extra napkins, less spicy please">
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4 pt-2">
-                                <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all">
+                            <div class="grid grid-cols-3 gap-3 pt-2">
+                                <label class="flex items-center gap-2.5 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all">
                                     <input type="checkbox" name="eco_cutlery" value="1" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
                                     <div>
-                                        <span class="font-extrabold text-slate-800 text-xs block">🌱 Eco-Friendly Cutlery</span>
-                                        <span class="text-[10px] text-slate-500">Biodegradable bamboo forks & spoons</span>
+                                        <span class="font-extrabold text-slate-800 text-[11px] block">🌱 Eco Cutlery</span>
                                     </div>
                                 </label>
 
-                                <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="togglePriorityQueue(this)">
+                                <label class="flex items-center gap-2.5 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="togglePriorityQueue(this)">
                                     <input type="checkbox" name="priority_queue" id="priorityCheckbox" value="1" onchange="recalculateTotal()" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
                                     <div>
-                                        <span class="font-extrabold text-slate-800 text-xs block">⚡ VIP Priority Kitchen (+৳15)</span>
-                                        <span class="text-[10px] text-slate-500">Skip regular wait list & cook first</span>
+                                        <span class="font-extrabold text-slate-800 text-[11px] block">⚡ VIP Queue (+৳15)</span>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-2.5 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="toggleCarbonOffset(this)">
+                                    <input type="checkbox" name="carbon_offset" id="carbonCheckbox" value="1" onchange="recalculateTotal()" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
+                                    <div>
+                                        <span class="font-extrabold text-slate-800 text-[11px] block">🌳 Offset Tree (+৳5)</span>
                                     </div>
                                 </label>
                             </div>
@@ -401,51 +428,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="w-9 h-9 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
                                 <i class="fa-solid fa-wallet"></i>
                             </span> 
-                            Secure Payment Options
+                            Secure Payment Gateways
                         </h2>
 
-                        <div class="grid grid-cols-3 gap-4">
+                        <div class="grid grid-cols-4 gap-3">
                             <div id="optCash" onclick="selectPaymentMethod('Cash / Counter Payment')" class="border-2 border-[#00966b] bg-[#e6f7f2]/80 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="w-10 h-10 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
-                                        <i class="fa-solid fa-money-bill-wave text-base"></i>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="w-8 h-8 rounded-xl bg-[#00966b]/10 flex items-center justify-center text-[#00966b]">
+                                        <i class="fa-solid fa-money-bill-wave text-xs"></i>
                                     </div>
-                                    <span id="cashCheck" class="w-5 h-5 rounded-full bg-[#00966b] text-white flex items-center justify-center text-[10px]">
+                                    <span id="cashCheck" class="w-4 h-4 rounded-full bg-[#00966b] text-white flex items-center justify-center text-[9px]">
                                         <i class="fa-solid fa-check"></i>
                                     </span>
                                 </div>
-                                <div>
-                                    <p class="font-extrabold text-slate-900 text-xs">Cash / Counter</p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Pay physically</p>
-                                </div>
+                                <p class="font-extrabold text-slate-900 text-xs">Cash</p>
                             </div>
 
                             <div id="optBkash" onclick="selectPaymentMethod('bKash Online Payment')" class="border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:border-[#e2136e]">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="w-10 h-10 rounded-xl bg-[#e2136e]/10 flex items-center justify-center text-[#e2136e]">
-                                        <i class="fa-solid fa-mobile-screen-button text-base"></i>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="w-8 h-8 rounded-xl bg-[#e2136e]/10 flex items-center justify-center text-[#e2136e]">
+                                        <i class="fa-solid fa-mobile-screen-button text-xs"></i>
                                     </div>
-                                    <span id="bkashCheck" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"></span>
+                                    <span id="bkashCheck" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center text-[9px]"></span>
                                 </div>
-                                <div>
-                                    <p class="font-extrabold text-slate-900 text-xs flex items-center gap-1">
-                                        <span>bKash Instant</span>
-                                    </p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Automated Gateway</p>
-                                </div>
+                                <p class="font-extrabold text-slate-900 text-xs">bKash</p>
                             </div>
 
                             <div id="optCard" onclick="selectPaymentMethod('Campus Smart Card')" class="border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:border-blue-500">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
-                                        <i class="fa-solid fa-id-card text-base"></i>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
+                                        <i class="fa-solid fa-id-card text-xs"></i>
                                     </div>
-                                    <span id="cardCheck" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"></span>
+                                    <span id="cardCheck" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center text-[9px]"></span>
                                 </div>
-                                <div>
-                                    <p class="font-extrabold text-slate-900 text-xs">EWU Smart Card</p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Direct ID debit</p>
+                                <p class="font-extrabold text-slate-900 text-xs">Smart Card</p>
+                            </div>
+
+                            <div id="optCrypto" onclick="selectPaymentMethod('EWU Campus Coin')" class="border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:border-amber-500">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+                                        <i class="fa-solid fa-coins text-xs"></i>
+                                    </div>
+                                    <span id="cryptoCheck" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center text-[9px]"></span>
                                 </div>
+                                <p class="font-extrabold text-slate-900 text-xs">Campus Coin</p>
                             </div>
                         </div>
                     </div>
@@ -459,7 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </h2>
                     
                     <div class="space-y-3 mb-6 max-h-48 overflow-y-auto pr-1">
-                        <?php foreach ($cart_items as$item): ?>
+                        <?php foreach ($cart_items as $item): ?>
                         <div class="flex items-center justify-between text-sm py-2 border-b border-slate-100">
                             <div class="flex items-center gap-2.5">
                                 <span class="font-extrabold text-[#00966b]"><?= $item['quantity'] ?>x</span>
@@ -510,6 +536,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span>+৳15.00</span>
                         </div>
 
+                        <div id="carbonRow" class="flex justify-between text-sm text-emerald-700 font-bold hidden">
+                            <span>Carbon Offset Tree</span>
+                            <span>+৳5.00</span>
+                        </div>
+
                         <div class="flex justify-between text-xl font-black text-slate-900 border-t border-slate-100 pt-3">
                             <span>Total Payable</span>
                             <span class="text-[#00966b]">৳<span id="displayTotal"><?= number_format($subtotal, 2) ?></span></span>
@@ -526,7 +557,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </main>
 
-    <!-- Map Modal -->
     <div id="mapModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
         <div class="bg-white w-full max-w-xl rounded-3xl p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
@@ -563,7 +593,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <!-- Dietary Guard Modal -->
     <div id="dietaryModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
         <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
@@ -575,7 +604,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
             </div>
 
-            <p class="text-xs text-slate-500 mb-4">Neural analysis of your current cart items:</p>
+            <p class="text-xs text-slate-500 mb-4">Quantum neural analysis of your cart items:</p>
 
             <div class="space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <div class="flex items-center justify-between text-xs font-bold text-slate-700">
@@ -596,15 +625,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <!-- bKash Gateway Modal -->
+    <div id="nutritionModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-amber-500"></i> Estimated Nutrition Facts
+                </h3>
+                <button type="button" onclick="closeNutritionModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span>🔥 Total Calories</span>
+                    <span class="text-slate-900 font-black">~640 kcal</span>
+                </div>
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span>🥩 Protein Content</span>
+                    <span class="text-slate-900 font-black">~32g</span>
+                </div>
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span>⚡ Carbohydrates</span>
+                    <span class="text-slate-900 font-black">~75g</span>
+                </div>
+            </div>
+
+            <button type="button" onclick="closeNutritionModal()" class="w-full py-3 bg-emerald-800 text-white font-extrabold rounded-2xl text-xs hover:bg-emerald-900 transition-all">Close</button>
+        </div>
+    </div>
+
     <div id="bkashGatewayModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-pink-100">
-            
             <div class="bg-gradient-to-r from-[#e2136e] to-[#b80d57] p-6 text-white text-center relative">
                 <button type="button" onclick="closeBkashGateway()" class="absolute right-5 top-5 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all text-xs">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                
                 <div class="w-14 h-14 bg-white text-[#e2136e] rounded-2xl flex items-center justify-center font-black text-2xl mx-auto mb-2 shadow-lg">
                     ৳
                 </div>
@@ -623,7 +679,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">bKash Mobile Account Number</label>
                         <input type="text" id="bkashPhoneInput" maxlength="11" placeholder="01XXXXXXXXX" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center font-extrabold text-lg text-slate-800 outline-none focus:border-[#e2136e] transition-all tracking-wider">
                     </div>
-
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button type="button" onclick="closeBkashGateway()" class="py-3.5 bg-slate-100 hover:bg-slate-200 font-bold text-slate-600 rounded-2xl transition-all text-sm">Cancel</button>
                         <button type="button" onclick="goToBkashStepOTP()" class="py-3.5 bkash-btn text-white font-extrabold rounded-2xl transition-all text-sm">Get OTP</button>
@@ -636,7 +691,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="text" id="bkashOtpInput" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center font-black text-2xl text-slate-800 outline-none focus:border-[#e2136e] transition-all tracking-widest">
                         <p class="text-[11px] text-slate-400 text-center mt-2">Demo Sandbox OTP: <strong class="text-[#e2136e]">123456</strong></p>
                     </div>
-
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button type="button" onclick="backToBkashStep1()" class="py-3.5 bg-slate-100 hover:bg-slate-200 font-bold text-slate-600 rounded-2xl transition-all text-sm">Back</button>
                         <button type="button" onclick="goToBkashStepPIN()" class="py-3.5 bkash-btn text-white font-extrabold rounded-2xl transition-all text-sm">Confirm OTP</button>
@@ -648,7 +702,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">bKash Account PIN</label>
                         <input type="password" id="bkashPinInput" maxlength="5" placeholder="•••••" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-center font-black text-2xl text-slate-800 outline-none focus:border-[#e2136e] transition-all tracking-widest">
                     </div>
-
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button type="button" onclick="backToBkashStepOTP()" class="py-3.5 bg-slate-100 hover:bg-slate-200 font-bold text-slate-600 rounded-2xl transition-all text-sm">Back</button>
                         <button type="button" onclick="processFinalBkashPayment()" class="py-3.5 bkash-btn text-white font-extrabold rounded-2xl transition-all text-sm">Pay Now</button>
@@ -659,12 +712,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="w-12 h-12 border-4 border-[#e2136e] border-t-transparent rounded-full animate-spin mx-auto"></div>
                     <p class="font-extrabold text-slate-800 text-sm">Validating Secure bKash Transfer...</p>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!-- Smart Card Modal -->
     <div id="cardModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
             <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white text-center relative">
@@ -687,6 +738,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <div id="cryptoModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-amber-100">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-6 text-white text-center relative">
+                <button type="button" onclick="closeCryptoModal()" class="absolute right-5 top-5 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="w-14 h-14 bg-white text-amber-600 rounded-2xl flex items-center justify-center font-black text-2xl mx-auto mb-2 shadow-lg">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <h3 class="text-lg font-extrabold">EWU Campus Coin Wallet</h3>
+                <p class="text-xs text-white/80 font-medium">Decentralized Student Rewards Token</p>
+            </div>
+            <div class="p-6 space-y-4 text-center">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Available Token Balance</span>
+                    <span class="text-2xl font-black text-amber-600">450.00 CC</span>
+                </div>
+                <button type="button" onclick="processCryptoPayment()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-extrabold rounded-2xl transition-all text-sm shadow-lg shadow-amber-500/25">Spend Campus Coins</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const rawSubtotal = <?= (float)$subtotal ?>;
         let appliedDiscount = 0.00;
@@ -700,7 +773,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(580, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.06);
             osc.connect(gain);
@@ -709,7 +782,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             osc.stop(audioCtx.currentTime + 0.06);
         }
 
-        let totalSeconds = 840;
+        let totalSeconds = 720;
         setInterval(() => {
             if(totalSeconds > 0) {
                 totalSeconds--;
@@ -747,6 +820,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('dietaryModal').classList.remove('flex');
         }
 
+        function openNutritionModal() {
+            playClickSound();
+            document.getElementById('nutritionModal').classList.remove('hidden');
+            document.getElementById('nutritionModal').classList.add('flex');
+        }
+
+        function closeNutritionModal() {
+            document.getElementById('nutritionModal').classList.add('hidden');
+            document.getElementById('nutritionModal').classList.remove('flex');
+        }
+
         function toggleOrderType(type) {
             playClickSound();
             currentOrderType = type;
@@ -762,6 +846,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 btnTake.className = "px-5 py-2 rounded-xl text-xs font-extrabold bg-[#00966b] text-white shadow-md transition-all";
                 btnDine.className = "px-5 py-2 rounded-xl text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all";
             }
+        }
+
+        function selectScheduleTime(timeStr, el) {
+            playClickSound();
+            document.getElementById('scheduledTimeInput').value = timeStr;
+            document.querySelectorAll('.schedule-btn').forEach(btn => {
+                btn.className = "schedule-btn p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-extrabold text-slate-600 transition-all text-center";
+            });
+            el.className = "schedule-btn p-3 rounded-2xl border-2 border-[#00966b] bg-[#e6f7f2] text-xs font-extrabold text-slate-800 transition-all text-center";
         }
 
         function addStaffTip(amount) {
@@ -795,7 +888,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 msgEl.innerText = "✓ Voucher Applied! 10% Student Discount.";
                 msgEl.classList.remove('hidden');
 
-                confetti({ particleCount: 80, spread: 70, origin: { y: 0.8 } });
+                confetti({ particleCount: 90, spread: 80, origin: { y: 0.8 } });
             } else {
                 msgEl.className = "text-[11px] font-bold mt-1.5 text-rose-500";
                 msgEl.innerText = "✕ Invalid coupon code. Try 'EWU10'";
@@ -806,16 +899,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         function recalculateTotal() {
             const isPriority = document.getElementById('priorityCheckbox').checked;
-            const priorityCost = isPriority ? 15.00 : 0.00;
+            const isCarbon = document.getElementById('carbonCheckbox').checked;
             
-            const priorityRow = document.getElementById('priorityRow');
-            if (isPriority) {
-                priorityRow.classList.remove('hidden');
-            } else {
-                priorityRow.classList.add('hidden');
-            }
+            const priorityCost = isPriority ? 15.00 : 0.00;
+            const carbonCost = isCarbon ? 5.00 : 0.00;
+            
+            document.getElementById('priorityRow').classList.toggle('hidden', !isPriority);
+            document.getElementById('carbonRow').classList.toggle('hidden', !isCarbon);
 
-            const finalVal = Math.max(0, rawSubtotal - appliedDiscount + currentTip + priorityCost).toFixed(2);
+            const finalVal = Math.max(0, rawSubtotal - appliedDiscount + currentTip + priorityCost + carbonCost).toFixed(2);
             document.getElementById('displayTotal').innerText = finalVal;
             document.getElementById('bkashModalAmount').innerText = finalVal;
         }
@@ -823,9 +915,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function togglePriorityQueue(el) {
             playClickSound();
             const checkbox = document.getElementById('priorityCheckbox');
-            if(event.target !== checkbox) {
-                checkbox.checked = !checkbox.checked;
-            }
+            if(event.target !== checkbox) { checkbox.checked = !checkbox.checked; }
+            recalculateTotal();
+        }
+
+        function toggleCarbonOffset(el) {
+            playClickSound();
+            const checkbox = document.getElementById('carbonCheckbox');
+            if(event.target !== checkbox) { checkbox.checked = !checkbox.checked; }
             recalculateTotal();
         }
 
@@ -834,35 +931,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             currentPayment = method;
             document.getElementById('selectedPaymentInput').value = method;
 
-            const optCash = document.getElementById('optCash');
-            const optBkash = document.getElementById('optBkash');
-            const optCard = document.getElementById('optCard');
-            
-            const cashCheck = document.getElementById('cashCheck');
-            const bkashCheck = document.getElementById('bkashCheck');
-            const cardCheck = document.getElementById('cardCheck');
+            ['Cash / Counter Payment', 'bKash Online Payment', 'Campus Smart Card', 'EWU Campus Coin'].forEach(m => {
+                let key = 'Cash';
+                if(m.includes('bKash')) key = 'Bkash';
+                else if(m.includes('Smart')) key = 'Card';
+                else if(m.includes('Coin')) key = 'Crypto';
 
-            optCash.className = "border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300";
-            optBkash.className = "border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300";
-            optCard.className = "border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300";
+                const opt = document.getElementById('opt' + key);
+                const chk = document.getElementById(key.toLowerCase() + 'Check');
 
-            cashCheck.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"; cashCheck.innerHTML = '';
-            bkashCheck.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"; bkashCheck.innerHTML = '';
-            cardCheck.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px]"; cardCheck.innerHTML = '';
-
-            if (method === 'Cash / Counter Payment') {
-                optCash.className = "border-2 border-[#00966b] bg-[#e6f7f2]/80 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active";
-                cashCheck.className = "w-5 h-5 rounded-full bg-[#00966b] text-white flex items-center justify-center text-[10px]";
-                cashCheck.innerHTML = '<i class="fa-solid fa-check"></i>';
-            } else if (method === 'bKash Online Payment') {
-                optBkash.className = "border-2 border-[#e2136e] bg-[#e2136e]/5 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active";
-                bkashCheck.className = "w-5 h-5 rounded-full bg-[#e2136e] text-white flex items-center justify-center text-[10px]";
-                bkashCheck.innerHTML = '<i class="fa-solid fa-check"></i>';
-            } else {
-                optCard.className = "border-2 border-blue-600 bg-blue-50/50 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active";
-                cardCheck.className = "w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px]";
-                cardCheck.innerHTML = '<i class="fa-solid fa-check"></i>';
-            }
+                if (m === method) {
+                    opt.className = "border-2 border-[#00966b] bg-[#e6f7f2]/80 rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 pulse-active";
+                    chk.className = "w-4 h-4 rounded-full bg-[#00966b] text-white flex items-center justify-center text-[9px]";
+                    chk.innerHTML = '<i class="fa-solid fa-check"></i>';
+                } else {
+                    opt.className = "border-2 border-slate-100 bg-white rounded-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300";
+                    chk.className = "w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center text-[9px]";
+                    chk.innerHTML = '';
+                }
+            });
         }
 
         function triggerRocketAnimation(callback) {
@@ -870,8 +957,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             rocketBox.classList.remove('hidden');
 
             confetti({
-                particleCount: 160,
-                spread: 110,
+                particleCount: 170,
+                spread: 120,
                 origin: { y: 0.6 }
             });
 
@@ -899,7 +986,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (currentPayment === 'Cash / Counter Payment') {
                 Swal.fire({
                     title: 'Confirm Order Submission?',
-                    text: "Your order will be transmitted directly to the kitchen queue.",
+                    text: "Your order will be transmitted directly to the quantum kitchen queue.",
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#00966b',
@@ -915,8 +1002,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 });
             } else if (currentPayment === 'bKash Online Payment') {
                 openBkashGateway();
-            } else {
+            } else if (currentPayment === 'Campus Smart Card') {
                 openCardModal();
+            } else {
+                openCryptoModal();
             }
         }
 
@@ -942,6 +1031,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function closeCardModal() {
             document.getElementById('cardModal').classList.add('hidden');
             document.getElementById('cardModal').classList.remove('flex');
+        }
+
+        function openCryptoModal() {
+            document.getElementById('cryptoModal').classList.remove('hidden');
+            document.getElementById('cryptoModal').classList.add('flex');
+        }
+
+        function closeCryptoModal() {
+            document.getElementById('cryptoModal').classList.add('hidden');
+            document.getElementById('cryptoModal').classList.remove('flex');
         }
 
         function goToBkashStepOTP() {
@@ -1010,6 +1109,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const mockTrx = 'CARD-' + Math.floor(100000 + Math.random() * 900000);
             document.getElementById('gatewayTrxInput').value = mockTrx;
             closeCardModal();
+
+            triggerRocketAnimation(() => {
+                document.getElementById('checkoutForm').submit();
+            });
+        }
+
+        function processCryptoPayment() {
+            playClickSound();
+            const mockTrx = 'CC-' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('gatewayTrxInput').value = mockTrx;
+            closeCryptoModal();
 
             triggerRocketAnimation(() => {
                 document.getElementById('checkoutForm').submit();
