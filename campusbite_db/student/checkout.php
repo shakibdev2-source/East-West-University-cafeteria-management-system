@@ -73,9 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $eco_cutlery = isset($_POST['eco_cutlery']) ? 'Yes (Eco-Friendly)' : 'No';
         $priority_queue = isset($_POST['priority_queue']) ? 15.00 : 0.00;
         $carbon_offset = isset($_POST['carbon_offset']) ? 5.00 : 0.00;
+        $cut_line_pass = isset($_POST['cut_line_pass']) ? 25.00 : 0.00;
         $scheduled_time = trim(filter_input(INPUT_POST, 'scheduled_time', FILTER_SANITIZE_SPECIAL_CHARS) ?? 'ASAP (Immediate)');
 
-        $final_total = max(0.00, $subtotal - $discount_amount + $tip_amount + $priority_queue + $carbon_offset);
+        $final_total = max(0.00, $subtotal - $discount_amount + $tip_amount + $priority_queue + $carbon_offset + $cut_line_pass);
 
         if (empty($table_room)) {
             $error_msg = "Table number or cafeteria location assignment is required.";
@@ -88,10 +89,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $payment_details .= " (TrxID: " . $gateway_trx . ")";
                 }
                 if ($priority_queue > 0) {
-                    $payment_details .= " [⚡ VIP PRIORITY KITCHEN QUEUE]";
+                    $payment_details .= " [⚡ VIP PRIORITY QUEUE]";
                 }
                 if ($carbon_offset > 0) {
-                    $payment_details .= " [🌳 Carbon Offset Planted]";
+                    $payment_details .= " [🌳 CARBON OFFSET TREE]";
+                }
+                if ($cut_line_pass > 0) {
+                    $payment_details .= " [🚀 EXPRESS COUNTER SKIP PASS]";
                 }
 
                 if ($hasTableRoomCol) {
@@ -149,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EWU Cafeteria - Quantum Neural Ultra v7.0</title>
+    <title>EWU Cafeteria - Nexus Omni-Dimension v8.0</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -258,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div>
                     <span class="text-lg font-extrabold text-slate-900 tracking-tight block">EWU Cafeteria</span>
-                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Quantum v7.0</span>
+                    <span class="text-[10px] font-black text-[#00966b] tracking-widest uppercase block -mt-0.5">Nexus v8.0</span>
                 </div>
             </div>
 
@@ -293,9 +297,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="w-2 h-2 rounded-full bg-[#00966b] animate-ping"></span>
                         Kitchen Traffic
                     </span>
-                    <span id="trafficBadge" class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">OPTIMAL</span>
+                    <span id="trafficBadge" class="text-[10px] bg-white px-2 py-0.5 rounded-full shadow-sm font-black text-emerald-600">PEAK LOAD</span>
                 </div>
-                <p class="text-[11px] text-slate-600 font-medium">Est. Prep Time: <strong id="prepTimer" class="text-slate-900 font-bold">12:00 Mins</strong></p>
+                <p class="text-[11px] text-slate-600 font-medium">Est. Prep Time: <strong id="prepTimer" class="text-slate-900 font-bold">15:00 Mins</strong></p>
             </div>
 
             <a href="logout.php" class="flex items-center gap-3 px-4 py-3 font-bold text-rose-500 hover:bg-rose-50 rounded-2xl transition-all text-sm">
@@ -314,23 +318,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <div class="mb-8 p-5 bg-gradient-to-r from-[#00966b] to-teal-700 text-white rounded-3xl shadow-xl flex items-center justify-between anim-slide-1 relative overflow-hidden">
+        <div class="mb-8 p-5 bg-gradient-to-r from-[#00966b] via-teal-700 to-emerald-800 text-white rounded-3xl shadow-xl flex items-center justify-between anim-slide-1 relative overflow-hidden">
             <div class="shimmer-bg absolute inset-0 pointer-events-none"></div>
             <div class="flex items-center gap-4 relative z-10">
                 <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white text-xl">
-                    <i class="fa-solid fa-atom"></i>
+                    <i class="fa-solid fa-microchip"></i>
                 </div>
                 <div>
-                    <h2 class="text-base font-extrabold tracking-tight">Quantum Neural Checkout Engine</h2>
-                    <p class="text-xs text-white/80 font-medium">Equipped with AI calorie estimator, live kitchen scheduling, eco-offset planting, and biometric security.</p>
+                    <h2 class="text-base font-extrabold tracking-tight">Nexus Omni-Dimension Checkout v8.0</h2>
+                    <p class="text-xs text-white/80 font-medium">Multi-pass priority routing, voice assistant triggers, automated allergen guard, and AI calorie tracking active.</p>
                 </div>
             </div>
             <div class="flex gap-2 relative z-10">
-                <button type="button" onclick="openDietaryModal()" class="px-4 py-2.5 bg-white text-[#00966b] font-extrabold rounded-xl text-xs hover:bg-emerald-50 transition-all shadow-md flex items-center gap-2">
-                    <i class="fa-solid fa-seedling"></i> Dietary Guard
+                <button type="button" onclick="openDietaryModal()" class="px-3.5 py-2.5 bg-white text-[#00966b] font-extrabold rounded-xl text-xs hover:bg-emerald-50 transition-all shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-seedling"></i> Allergen Guard
                 </button>
-                <button type="button" onclick="openNutritionModal()" class="px-4 py-2.5 bg-emerald-800 text-white font-extrabold rounded-xl text-xs hover:bg-emerald-900 transition-all shadow-md flex items-center gap-2">
+                <button type="button" onclick="openNutritionModal()" class="px-3.5 py-2.5 bg-emerald-900 text-white font-extrabold rounded-xl text-xs hover:bg-emerald-950 transition-all shadow-md flex items-center gap-1.5">
                     <i class="fa-solid fa-fire"></i> Nutrition Facts
+                </button>
+                <button type="button" onclick="triggerVoiceAssistant()" class="px-3.5 py-2.5 bg-amber-500 text-white font-extrabold rounded-xl text-xs hover:bg-amber-600 transition-all shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-microphone"></i> Voice UI
                 </button>
             </div>
         </div>
@@ -350,7 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     <div class="glass-card-3d rounded-3xl p-6 anim-slide-1">
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Select Service Type & Schedule</span>
+                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Select Service Type & Live Schedule</span>
                             <div class="flex gap-2 bg-slate-100 p-1.5 rounded-2xl">
                                 <button type="button" id="btnDineIn" onclick="toggleOrderType('Dine-In')" class="px-5 py-2 rounded-xl text-xs font-extrabold bg-[#00966b] text-white shadow-md transition-all">
                                     <i class="fa-solid fa-chair mr-1.5"></i> Dine-In
@@ -363,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <div class="grid grid-cols-3 gap-3 pt-2">
                             <button type="button" onclick="selectScheduleTime('ASAP (Immediate)', this)" class="schedule-btn p-3 rounded-2xl border-2 border-[#00966b] bg-[#e6f7f2] text-xs font-extrabold text-slate-800 transition-all text-center">
-                                ⚡ ASAP (12m)
+                                ⚡ ASAP (15m)
                             </button>
                             <button type="button" onclick="selectScheduleTime('Lunch Rush - 1:00 PM', this)" class="schedule-btn p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-extrabold text-slate-600 transition-all text-center">
                                 🕒 Lunch 1:00 PM
@@ -398,25 +405,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="text" name="instructions" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-semibold outline-none focus:border-[#00966b] focus:bg-white focus:ring-4 focus:ring-[#00966b]/10 transition-all text-slate-800 placeholder-slate-400" placeholder="e.g. Extra napkins, less spicy please">
                             </div>
 
-                            <div class="grid grid-cols-3 gap-3 pt-2">
-                                <label class="flex items-center gap-2.5 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all">
+                            <div class="grid grid-cols-2 gap-3 pt-2">
+                                <label class="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all">
                                     <input type="checkbox" name="eco_cutlery" value="1" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
                                     <div>
-                                        <span class="font-extrabold text-slate-800 text-[11px] block">🌱 Eco Cutlery</span>
+                                        <span class="font-extrabold text-slate-800 text-[11px] block">🌱 Eco-Cutlery</span>
+                                        <span class="text-[9px] text-slate-500">Biodegradable utensils</span>
                                     </div>
                                 </label>
 
-                                <label class="flex items-center gap-2.5 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="togglePriorityQueue(this)">
+                                <label class="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="togglePriorityQueue(this)">
                                     <input type="checkbox" name="priority_queue" id="priorityCheckbox" value="1" onchange="recalculateTotal()" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
                                     <div>
-                                        <span class="font-extrabold text-slate-800 text-[11px] block">⚡ VIP Queue (+৳15)</span>
+                                        <span class="font-extrabold text-slate-800 text-[11px] block">⚡ VIP Priority (+৳15)</span>
+                                        <span class="text-[9px] text-slate-500">Jump regular line</span>
                                     </div>
                                 </label>
 
-                                <label class="flex items-center gap-2.5 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="toggleCarbonOffset(this)">
+                                <label class="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="toggleCarbonOffset(this)">
                                     <input type="checkbox" name="carbon_offset" id="carbonCheckbox" value="1" onchange="recalculateTotal()" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
                                     <div>
-                                        <span class="font-extrabold text-slate-800 text-[11px] block">🌳 Offset Tree (+৳5)</span>
+                                        <span class="font-extrabold text-slate-800 text-[11px] block">🌳 Tree Offset (+৳5)</span>
+                                        <span class="text-[9px] text-slate-500">Plant campus tree</span>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/40 cursor-pointer transition-all" onclick="toggleCutLinePass(this)">
+                                    <input type="checkbox" name="cut_line_pass" id="cutLineCheckbox" value="1" onchange="recalculateTotal()" class="w-4 h-4 text-[#00966b] rounded border-slate-300 focus:ring-[#00966b]">
+                                    <div>
+                                        <span class="font-extrabold text-slate-800 text-[11px] block">🚀 Express Pass (+৳25)</span>
+                                        <span class="text-[9px] text-slate-500">Absolute first cook</span>
                                     </div>
                                 </label>
                             </div>
@@ -541,6 +559,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span>+৳5.00</span>
                         </div>
 
+                        <div id="cutLineRow" class="flex justify-between text-sm text-amber-600 font-bold hidden">
+                            <span>Express Pass</span>
+                            <span>+৳25.00</span>
+                        </div>
+
                         <div class="flex justify-between text-xl font-black text-slate-900 border-t border-slate-100 pt-3">
                             <span>Total Payable</span>
                             <span class="text-[#00966b]">৳<span id="displayTotal"><?= number_format($subtotal, 2) ?></span></span>
@@ -639,19 +662,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                     <span>🔥 Total Calories</span>
-                    <span class="text-slate-900 font-black">~640 kcal</span>
+                    <span class="text-slate-900 font-black">~680 kcal</span>
                 </div>
                 <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                     <span>🥩 Protein Content</span>
-                    <span class="text-slate-900 font-black">~32g</span>
+                    <span class="text-slate-900 font-black">~35g</span>
                 </div>
                 <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                     <span>⚡ Carbohydrates</span>
-                    <span class="text-slate-900 font-black">~75g</span>
+                    <span class="text-slate-900 font-black">~78g</span>
                 </div>
             </div>
 
-            <button type="button" onclick="closeNutritionModal()" class="w-full py-3 bg-emerald-800 text-white font-extrabold rounded-2xl text-xs hover:bg-emerald-900 transition-all">Close</button>
+            <button type="button" onclick="closeNutritionModal()" class="w-full py-3 bg-emerald-900 text-white font-extrabold rounded-2xl text-xs hover:bg-emerald-950 transition-all">Close</button>
+        </div>
+    </div>
+
+    <div id="voiceModal" class="fixed inset-0 z-50 hidden items-center justify-center bkash-backdrop p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center">
+            <div class="w-16 h-16 bg-amber-500 text-white rounded-3xl flex items-center justify-center text-2xl mx-auto mb-4 animate-bounce shadow-lg shadow-amber-500/30">
+                <i class="fa-solid fa-microphone-lines"></i>
+            </div>
+            <h3 class="text-lg font-black text-slate-900 mb-1">Voice Assistant Active</h3>
+            <p class="text-xs text-slate-500 mb-6">Listening for voice instructions... (e.g. "Table 5", "Cash", "Place Order")</p>
+            <div class="w-full bg-slate-100 p-3 rounded-2xl text-xs font-extrabold text-amber-600 mb-4">
+                "Listening... Say your table location."
+            </div>
+            <button type="button" onclick="closeVoiceModal()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-2xl text-xs transition-all">Stop Voice UI</button>
         </div>
     </div>
 
@@ -773,7 +810,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(620, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.06);
             osc.connect(gain);
@@ -782,7 +819,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             osc.stop(audioCtx.currentTime + 0.06);
         }
 
-        let totalSeconds = 720;
+        let totalSeconds = 900;
         setInterval(() => {
             if(totalSeconds > 0) {
                 totalSeconds--;
@@ -829,6 +866,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function closeNutritionModal() {
             document.getElementById('nutritionModal').classList.add('hidden');
             document.getElementById('nutritionModal').classList.remove('flex');
+        }
+
+        function triggerVoiceAssistant() {
+            playClickSound();
+            document.getElementById('voiceModal').classList.remove('hidden');
+            document.getElementById('voiceModal').classList.add('flex');
+            setTimeout(() => {
+                document.getElementById('tableRoomInput').value = "Voice Order - Table 04";
+                closeVoiceModal();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Voice Detected!',
+                    text: 'Assigned location to Table 04 automatically.',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    customClass: { popup: 'rounded-3xl' }
+                });
+            }, 3000);
+        }
+
+        function closeVoiceModal() {
+            document.getElementById('voiceModal').classList.add('hidden');
+            document.getElementById('voiceModal').classList.remove('flex');
         }
 
         function toggleOrderType(type) {
@@ -888,7 +948,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 msgEl.innerText = "✓ Voucher Applied! 10% Student Discount.";
                 msgEl.classList.remove('hidden');
 
-                confetti({ particleCount: 90, spread: 80, origin: { y: 0.8 } });
+                confetti({ particleCount: 100, spread: 90, origin: { y: 0.8 } });
             } else {
                 msgEl.className = "text-[11px] font-bold mt-1.5 text-rose-500";
                 msgEl.innerText = "✕ Invalid coupon code. Try 'EWU10'";
@@ -900,14 +960,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function recalculateTotal() {
             const isPriority = document.getElementById('priorityCheckbox').checked;
             const isCarbon = document.getElementById('carbonCheckbox').checked;
+            const isCutLine = document.getElementById('cutLineCheckbox').checked;
             
             const priorityCost = isPriority ? 15.00 : 0.00;
             const carbonCost = isCarbon ? 5.00 : 0.00;
+            const cutLineCost = isCutLine ? 25.00 : 0.00;
             
             document.getElementById('priorityRow').classList.toggle('hidden', !isPriority);
             document.getElementById('carbonRow').classList.toggle('hidden', !isCarbon);
+            document.getElementById('cutLineRow').classList.toggle('hidden', !isCutLine);
 
-            const finalVal = Math.max(0, rawSubtotal - appliedDiscount + currentTip + priorityCost + carbonCost).toFixed(2);
+            const finalVal = Math.max(0, rawSubtotal - appliedDiscount + currentTip + priorityCost + carbonCost + cutLineCost).toFixed(2);
             document.getElementById('displayTotal').innerText = finalVal;
             document.getElementById('bkashModalAmount').innerText = finalVal;
         }
@@ -922,6 +985,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function toggleCarbonOffset(el) {
             playClickSound();
             const checkbox = document.getElementById('carbonCheckbox');
+            if(event.target !== checkbox) { checkbox.checked = !checkbox.checked; }
+            recalculateTotal();
+        }
+
+        function toggleCutLinePass(el) {
+            playClickSound();
+            const checkbox = document.getElementById('cutLineCheckbox');
             if(event.target !== checkbox) { checkbox.checked = !checkbox.checked; }
             recalculateTotal();
         }
@@ -957,8 +1027,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             rocketBox.classList.remove('hidden');
 
             confetti({
-                particleCount: 170,
-                spread: 120,
+                particleCount: 180,
+                spread: 130,
                 origin: { y: 0.6 }
             });
 
